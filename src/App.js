@@ -239,6 +239,7 @@ export default function Portfolio() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // FIX #1 — Línea 254: se agrega 'sections' al array de dependencias
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -251,7 +252,7 @@ export default function Portfolio() {
       if (el) observer.observe(el);
     });
     return () => observer.disconnect();
-  }, []);
+  }, [sections]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div style={{ background: COLORS.bg, minHeight: "100vh", color: COLORS.text, fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
@@ -407,7 +408,9 @@ export default function Portfolio() {
       {/* SOBRE MÍ */}
       <section id="sobre-mi" className="section" style={{ position: "relative", zIndex: 1 }}>
         <div style={{ marginBottom: "48px" }}>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>// 01. sobre_mi</p>
+          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
+            {/* 01. sobre_mi */}
+          </p>
           <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Sobre mí</h2>
         </div>
 
@@ -463,7 +466,9 @@ export default function Portfolio() {
       {/* HABILIDADES */}
       <section id="habilidades" className="section" style={{ position: "relative", zIndex: 1 }}>
         <div style={{ marginBottom: "48px" }}>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>// 02. habilidades_tecnicas</p>
+          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
+            {/* 02. habilidades_tecnicas */}
+          </p>
           <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Stack Técnico</h2>
         </div>
 
@@ -496,7 +501,9 @@ export default function Portfolio() {
       {/* PROYECTOS */}
       <section id="proyectos" className="section" style={{ position: "relative", zIndex: 1 }}>
         <div style={{ marginBottom: "48px" }}>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>// 03. proyectos</p>
+          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
+            {/* 03. proyectos */}
+          </p>
           <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Proyectos</h2>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -507,7 +514,9 @@ export default function Portfolio() {
       {/* CONTACTO */}
       <section id="contacto" className="section" style={{ position: "relative", zIndex: 1 }}>
         <div style={{ marginBottom: "48px" }}>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>// 04. contacto</p>
+          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
+            {/* 04. contacto */}
+          </p>
           <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Hablemos</h2>
         </div>
 
@@ -517,7 +526,6 @@ export default function Portfolio() {
             { icon: "📱", label: "Teléfono / WhatsApp", value: "311 874 1905", href: "https://wa.me/573118741905" },
             { icon: "💻", label: "GitHub", value: "github.com/alan1130co", href: "https://github.com/alan1130co" },
             { icon: "🔗", label: "LinkedIn", value: "linkedin.com/in/alan-coneo-rodriguez", href: "https://www.linkedin.com/in/alan-coneo-rodriguez-4b5612362" },
-            
           ].map(({ icon, label, value, href }) => (
             <a key={label} href={href || "#"} target={href && !href.startsWith("mailto") ? "_blank" : undefined} rel="noreferrer"
               style={{
