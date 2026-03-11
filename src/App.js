@@ -232,14 +232,8 @@ export default function Portfolio() {
   const [titleDone, setTitleDone] = useState(false);
   const [subtitleDone, setSubtitleDone] = useState(false);
 
-const sections = useMemo(
-  () => ["hero", "sobre-mi", "habilidades", "proyectos", "contacto"],
-  []
-);
-const sectionLabels = useMemo(
-  () => ["Inicio", "Sobre mí", "Habilidades", "Proyectos", "Contacto"],
-  []
-);
+  const sections = useMemo(() => ["hero", "sobre-mi", "habilidades", "proyectos", "contacto"], []);
+  const sectionLabels = useMemo(() => ["Inicio", "Sobre mí", "Habilidades", "Proyectos", "Contacto"], []);
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -280,6 +274,15 @@ const sectionLabels = useMemo(
           mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
         }
         .glow-orb { position: fixed; border-radius: 50%; filter: blur(100px); pointer-events: none; z-index: 0; }
+        .sobre-mi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+        .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .contacto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 640px) {
+          .sobre-mi-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+          .skills-grid { grid-template-columns: 1fr !important; }
+          .contacto-grid { grid-template-columns: 1fr !important; }
+          .nav-links { display: none !important; }
+        }
       `}</style>
 
       <div className="grid-bg" />
@@ -420,7 +423,7 @@ const sectionLabels = useMemo(
           <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Sobre mí</h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "start" }}>
+        <div className="sobre-mi-grid">
           <div>
             <p style={{ color: COLORS.textDim, lineHeight: "1.9", fontSize: "15px", marginBottom: "20px" }}>
               Soy <span style={{ color: COLORS.text }}>Tecnólogo en Análisis y Desarrollo de Software</span>, con pasión por construir productos digitales que resuelvan problemas reales.
@@ -478,7 +481,7 @@ const sectionLabels = useMemo(
           <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Stack Técnico</h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px" }}>
+        <div className="skills-grid">
           {Object.entries(skills).map(([category, items], ci) => (
             <div key={category} style={{ background: COLORS.bgCard, border: `1px solid ${COLORS.border}`, borderRadius: "16px", padding: "28px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "24px" }}>
@@ -526,7 +529,7 @@ const sectionLabels = useMemo(
           <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Hablemos</h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
+        <div className="contacto-grid">
           {[
             { icon: "📧", label: "Email", value: "alanconeorodriguez1130@gmail.com", href: "mailto:alanconeorodriguez1130@gmail.com" },
             { icon: "📱", label: "Teléfono / WhatsApp", value: "311 874 1905", href: "https://wa.me/573118741905" },
