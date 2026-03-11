@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import fotoAlan from "./img_portafolio_web_alan_coneo.jpeg";
 
 const COLORS = {
@@ -232,8 +232,14 @@ export default function Portfolio() {
   const [titleDone, setTitleDone] = useState(false);
   const [subtitleDone, setSubtitleDone] = useState(false);
 
-  const sections = ["hero", "sobre-mi", "habilidades", "proyectos", "contacto"];
-  const sectionLabels = ["Inicio", "Sobre mí", "Habilidades", "Proyectos", "Contacto"];
+const sections = useMemo(
+  () => ["hero", "sobre-mi", "habilidades", "proyectos", "contacto"],
+  []
+);
+const sectionLabels = useMemo(
+  () => ["Inicio", "Sobre mí", "Habilidades", "Proyectos", "Contacto"],
+  []
+);
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
