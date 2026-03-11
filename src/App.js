@@ -52,15 +52,16 @@ const projects = [
   {
     name: "ElectroHome",
     subtitle: "E-commerce de Electrodomésticos",
+    website: "https://electrohome.site",
     description:
       "Plataforma de comercio electrónico completa con carrito inteligente, autenticación OAuth con Google, chatbot con IA integrada, sistema de recomendaciones personalizadas y pasarela de pagos Wompi.",
-    tech: ["Django", "Python", "PostgreSQL", "Tailwind CSS", "JavaScript", "Claude AI"],
+    tech: ["Django", "Python", "PostgreSQL", "Tailwind CSS", "JavaScript", "API de Claude"],
     github: "https://github.com/alan1130co/ecommerce-electrohome-render",
     color: "#2563eb",
     icon: "⚡",
     highlights: [
       "Carrito persistente para usuarios anónimos y autenticados",
-      "Chatbot con IA (Claude API) restringido al contexto de la tienda",
+      "Chatbot con IA (API de Claude) restringido al contexto de la tienda",
       "Sistema de recomendaciones basado en comportamiento",
       "Integración Google OAuth + Wompi pagos",
     ],
@@ -203,26 +204,52 @@ function ProjectCard({ project }) {
         ))}
       </div>
 
-      <a
-        href={project.github}
-        target="_blank"
-        rel="noreferrer"
-        style={{
-          display: "inline-flex", alignItems: "center", gap: "6px",
-          color: COLORS.textDim, textDecoration: "none",
-          fontSize: "13px", fontFamily: "'JetBrains Mono', monospace",
-          padding: "8px 16px",
-          border: `1px solid ${COLORS.border}`,
-          borderRadius: "8px", transition: "all 0.2s ease",
-        }}
-        onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; e.currentTarget.style.color = COLORS.text; }}
-        onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.color = COLORS.textDim; }}
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-        </svg>
-        Ver en GitHub
-      </a>
+      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+        <a
+          href={project.github}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "6px",
+            color: COLORS.textDim, textDecoration: "none",
+            fontSize: "13px", fontFamily: "'JetBrains Mono', monospace",
+            padding: "8px 16px",
+            border: `1px solid ${COLORS.border}`,
+            borderRadius: "8px", transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; e.currentTarget.style.color = COLORS.text; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.color = COLORS.textDim; }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+          </svg>
+          Ver en GitHub
+        </a>
+        {project.website && (
+          <a
+            href={project.website}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: "6px",
+              color: COLORS.textDim, textDecoration: "none",
+              fontSize: "13px", fontFamily: "'JetBrains Mono', monospace",
+              padding: "8px 16px",
+              border: `1px solid ${COLORS.border}`,
+              borderRadius: "8px", transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accentGreen; e.currentTarget.style.color = COLORS.text; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.color = COLORS.textDim; }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            electrohome.site
+          </a>
+        )}
+      </div>
     </div>
   );
 }
@@ -441,7 +468,7 @@ export default function Portfolio() {
             {[
               { label: "Nombre", value: "Alan David Coneo Rodríguez" },
               { label: "Ubicación", value: "Garzón, Huila — Colombia" },
-              { label: "Formación", value: "SENA — Tecnólogo en ADS" },
+              { label: "Formación", value: "SENA — Tecnólogo en ADSO" },
               { label: "Estado", value: "En formación (2024 - actualidad)" },
               { label: "GitHub", value: "github.com/alan1130co" },
               { label: "LinkedIn", value: "linkedin.com/in/alan-coneo-rodriguez" },
