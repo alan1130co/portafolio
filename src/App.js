@@ -281,7 +281,8 @@ export default function Portfolio() {
           .sobre-mi-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
           .skills-grid { grid-template-columns: 1fr !important; }
           .contacto-grid { grid-template-columns: 1fr !important; }
-          .nav-links { display: none !important; }
+          .nav-links button { font-size: 10px !important; padding: 4px 6px !important; }
+          .nav-dots { display: none !important; }
         }
       `}</style>
 
@@ -300,7 +301,7 @@ export default function Portfolio() {
         <span style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accentYellow, fontSize: "14px", fontWeight: 700 }}>
           alan<span style={{ color: COLORS.accent }}>.</span>dev
         </span>
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        <div className="nav-links" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           {sectionLabels.map((label, i) => (
             <button key={label} onClick={() => scrollTo(sections[i])} style={{
               background: activeSection === sections[i] ? `${COLORS.accent}20` : "transparent",
@@ -313,7 +314,7 @@ export default function Portfolio() {
             </button>
           ))}
         </div>
-        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+        <div className="nav-dots" style={{ display: "flex", gap: "6px", alignItems: "center" }}>
           {sections.map((s, i) => (
             <NavDot key={s} active={activeSection === s} onClick={() => scrollTo(s)} label={sectionLabels[i]} />
           ))}
