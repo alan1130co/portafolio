@@ -444,7 +444,7 @@ export default function Portfolio() {
 
       {/* SOBRE MÍ */}
       <section id="sobre-mi" className="section" style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ marginBottom: "48px" }}>
+        <div style={{ marginBottom: "48px", textAlign: "center"}}>
           <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
             {/* 01. sobre_mi */}
           </p>
@@ -502,7 +502,7 @@ export default function Portfolio() {
 
       {/* HABILIDADES */}
       <section id="habilidades" className="section" style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ marginBottom: "48px" }}>
+        <div style={{ marginBottom: "48px", textAlign: "center"}}>
           <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
             {/* 02. habilidades_tecnicas */}
           </p>
@@ -537,7 +537,7 @@ export default function Portfolio() {
 
       {/* PROYECTOS */}
       <section id="proyectos" className="section" style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ marginBottom: "48px" }}>
+        <div style={{ marginBottom: "48px" , textAlign: "center" }}>
           <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
             {/* 03. proyectos */}
           </p>
@@ -550,7 +550,7 @@ export default function Portfolio() {
 
       {/* CONTACTO */}
       <section id="contacto" className="section" style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ marginBottom: "48px" }}>
+        <div style={{ marginBottom: "48px", textAlign: "center"}}>
           <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
             {/* 04. contacto */}
           </p>
