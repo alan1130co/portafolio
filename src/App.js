@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import fotoAlan from "./img_portafolio_web_alan_coneo.jpeg";
+import fotoAlan from "./img_principal_hojadevida.png";
 
 const COLORS = {
   bg: "#0a0e1a",
