@@ -1,603 +1,518 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect } from "react";
 import fotoAlan from "./img_principal_hojadevida.png";
 
+/* ============================================================
+   TOKENS — acento azul, estructura tipo hdtoledo.dev
+   ============================================================ */
 const COLORS = {
-  bg: "#0a0e1a",
-  bgCard: "#0f1423",
-  bgCardHover: "#141929",
-  border: "#1e2d4a",
-  borderGlow: "#2563eb",
-  accent: "#2563eb",
-  accentGlow: "#3b82f6",
-  accentYellow: "#f59e0b",
-  accentGreen: "#10b981",
-  text: "#e2e8f0",
-  textMuted: "#64748b",
-  textDim: "#94a3b8",
+  bg: "#080b10",
+  bgPanel: "#0e131b",
+  bgPanelAlt: "#121824",
+  border: "#1d2632",
+  borderStrong: "#2c3a4c",
+  text: "#f2f5f8",
+  textMuted: "#8d97a6",
+  textFaint: "#5a6472",
+  accent: "#2f7cff",
+  accentBright: "#5c9bff",
+  accentSoft: "#2f7cff22",
+  status: "#22c55e",
 };
 
-const skills = {
-  Backend: [
-    { name: "Python", level: 85 },
-    { name: "Django", level: 80 },
-    { name: "Node.js", level: 65 },
-    { name: "JavaScript", level: 75 },
-  ],
-  Frontend: [
-    { name: "React", level: 70 },
-    { name: "HTML5", level: 90 },
-    { name: "CSS3", level: 85 },
-    { name: "Tailwind CSS", level: 80 },
-  ],
-  "Bases de Datos": [
-    { name: "PostgreSQL", level: 75 },
-    { name: "MySQL", level: 70 },
-    { name: "MongoDB", level: 60 },
-    { name: "SQLite", level: 80 },
-  ],
-};
+const skillGroups = [
+  { label: "FRONTEND", items: [
+    { name: "React", icon: "⚛" }, { name: "Django", icon: "◆" }, { name: "Next.js", icon: "N" }, { name: "TypeScript", icon: "TS" }, { name: "Tailwind CSS", icon: "≋" }
+  ]},
+  { label: "BACKEND", items: [
+    { name: "Node.js", icon: "⬡" }, { name: "MongoDB", icon: "🍃" }, { name: "PostgreSQL", icon: "🐘" }, { name: "MySQL", icon: "🐬" }
+  ]},
+  { label: "DEVOPS & CLOUD", items: [
+    { name: "Git", icon: "🐙" }, { name: "GitHub", icon: "gh" }, { name: "Docker", icon: "🐳" }
+  ]},
+];
 
-const softSkills = [
-  "Trabajo en equipo",
-  "Adaptabilidad",
-  "Resolución de problemas",
-  "Creatividad",
-  "Gestión del tiempo",
-  "Pensamiento analítico",
-  "Trabajo bajo presión",
-  "Responsabilidad",
+const softSkills = ["Trabajo en equipo", "Adaptabilidad", "Resolución de problemas", "Creatividad", "Gestión del tiempo", "Pensamiento analítico", "Trabajo bajo presión", "Responsabilidad"];
+
+const experiencia = [
+  {
+    timestamp: "Mayo 2026 — Presente",
+    title: "Desarrollador Full-Stack & Analista de Datos",
+    org: "Soluciones Migratorias",
+    detail: "Diseño y análisis de datos de CRM y Meta Ads utilizando Python, Pandas y Streamlit. Desarrollo web enfocado en posicionamiento SEO, integración de APIs (CRM, Meta Ads, reseñas de Google), Next.js y Tailwind CSS, con despliegue y gestión en el VPS de la empresa.",
+  },
+  {
+    timestamp: "2025 — 2026",
+    title: "Desarrollador Web (Landing Page de Turismo)",
+    org: "Proyecto Freelance — Experiencia Tour Cartagena",
+    detail: "Creación de la landing page para el sector turismo con posicionamiento en Google (SEO), utilizando TypeScript, Tailwind CSS, despliegue con CI/CD e infraestructura en la nube.",
+  },
+  {
+    timestamp: "2024 — 2025",
+    title: "Desarrollador Web Full-Stack",
+    org: "Proyecto ElectroHome",
+    detail: "Desarrollo y migración de e-commerce virtual store con integración de bases de datos, pasarelas de pago y optimización frontend.",
+  },
+];
+
+const educacion = [
+  {
+    timestamp: "2024 — 2026",
+    title: "Tecnólogo en Análisis y Desarrollo de Software",
+    org: "SENA",
+    detail: "Formación integral en arquitectura de software, modelado de bases de datos, desarrollo full-stack y buenas prácticas de programación.",
+  },
+];
+
+const services = [
+  { num: "01", title: "Desarrollo Web Full-Stack", description: "Creación de aplicaciones web modernas, rápidas y optimizadas utilizando React, Next.js, Django y Tailwind CSS." },
+  { num: "02", title: "Análisis de Datos", description: "Procesamiento y visualización de datos de negocio, CRM y campañas publicitarias usando Python, Pandas y Streamlit." },
+  { num: "03", title: "Posicionamiento SEO & APIs", description: "Optimización para motores de búsqueda en Google e integración de APIs de terceros (Meta Ads, CRM, Google Reviews)." },
+  { num: "04", title: "DevOps & Cloud", description: "Configuración de entornos, despliegues automatizados CI/CD, Docker y gestión de servidores VPS e infraestructura en la nube." },
 ];
 
 const projects = [
   {
-    name: "ElectroHome",
-    subtitle: "E-commerce de Electrodomésticos",
+    id: "id_01", tag: "DJANGO + REACT", name: "ElectroHome", subtitle: "E-commerce y tienda virtual",
     website: "https://electrohome.site",
-    description:
-      "Plataforma de comercio electrónico completa con carrito inteligente, autenticación OAuth con Google, chatbot con IA integrada, sistema de recomendaciones personalizadas y pasarela de pagos Wompi.",
-    tech: ["Django", "Python", "PostgreSQL", "Tailwind CSS", "JavaScript", "API de Claude"],
+    description: "Plataforma de comercio electrónico con gestión de base de datos, catálogos interactivos, optimización de plantillas y despliegue en la nube.",
+    tech: [{ icon: "🐍", name: "python" }, { icon: "◆", name: "django" }, { icon: "⚛", name: "react" }, { icon: "≋", name: "tailwindcss" }],
     github: "https://github.com/alan1130co/ecommerce-electrohome-render",
-    color: "#2563eb",
-    icon: "⚡",
-    highlights: [
-      "Carrito persistente para usuarios anónimos y autenticados",
-      "Chatbot con IA (API de Claude) restringido al contexto de la tienda",
-      "Sistema de recomendaciones basado en comportamiento",
-      "Integración Google OAuth + Wompi pagos",
-    ],
   },
 ];
 
-function TerminalText({ text, speed = 40, onDone }) {
+const contactCards = [
+  { num: "01", label: "Correo", value: "alanconeorodriguez1130@gmail.com", href: "mailto:alanconeorodriguez1130@gmail.com", action: "ENVIAR_CORREO" },
+  { num: "02", label: "WhatsApp", value: "311 874 1905", href: "https://wa.me/573118741905", action: "ABRIR_CHAT" },
+  { num: "03", label: "GitHub", value: "github.com/alan1130co", href: "https://github.com/alan1130co", action: "VER_PERFIL" },
+  { num: "04", label: "LinkedIn", value: "linkedin.com/in/alan-coneo-rodriguez", href: "https://www.linkedin.com/in/alan-coneo-rodriguez-4b5612362", action: "VER_PERFIL" },
+];
+
+const socialRow = [
+  { label: "GH", href: "https://github.com/alan1130co", title: "GitHub" },
+  { label: "IN", href: "https://www.linkedin.com/in/alan-coneo-rodriguez-4b5612362", title: "LinkedIn" },
+  { label: "WA", href: "https://wa.me/573118741905", title: "WhatsApp" },
+];
+
+const stats = [
+  { value: 1, suffix: " Año", label: "DE EXPERIENCIA" },
+  { value: 4, suffix: "", label: "SERVICIOS CLAVE" },
+  { value: 3, suffix: "+", label: "PROYECTOS Y CLIENTES" },
+  { value: 2024, suffix: "", label: "INICIO FORMACIÓN" },
+];
+
+const perfilFields = [
+  ["Nombre", "Alan Coneo"], ["Experiencia", "1 Año"],
+  ["Nacionalidad", "Colombiano"], ["Freelance", "Disponible"],
+  ["Idioma", "Español"], ["Formación", "Tecnólogo ADSO (SENA)"],
+];
+
+/* ============================================================
+   Componentes
+   ============================================================ */
+
+function TerminalText({ text, speed = 42, onDone }) {
   const [displayed, setDisplayed] = useState("");
   const [idx, setIdx] = useState(0);
-
   useEffect(() => {
     if (idx < text.length) {
-      const t = setTimeout(() => {
-        setDisplayed((p) => p + text[idx]);
-        setIdx((i) => i + 1);
-      }, speed);
+      const t = setTimeout(() => { setDisplayed((p) => p + text[idx]); setIdx((i) => i + 1); }, speed);
       return () => clearTimeout(t);
-    } else if (onDone) {
-      onDone();
-    }
+    } else if (onDone) onDone();
   }, [idx, text, speed, onDone]);
-
   return (
     <span>
       {displayed}
-      {idx < text.length && (
-        <span style={{
-          display: "inline-block", width: "2px", height: "1.1em",
-          background: COLORS.accentYellow, marginLeft: "2px",
-          verticalAlign: "middle", animation: "blink 1s step-end infinite",
-        }} />
-      )}
+      {idx < text.length && <span style={{ display: "inline-block", width: "3px", height: "0.85em", background: COLORS.accentBright, marginLeft: "2px", verticalAlign: "middle", animation: "blink 1s step-end infinite" }} />}
     </span>
   );
 }
 
-function NavDot({ active, onClick, label }) {
-  return (
-    <button onClick={onClick} title={label} style={{
-      width: active ? "28px" : "8px", height: "8px", borderRadius: "4px",
-      background: active ? COLORS.accent : COLORS.border,
-      border: "none", cursor: "pointer", transition: "all 0.3s ease", padding: 0,
-    }} />
-  );
+function StatusDot() {
+  return <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: COLORS.status, animation: "pulseDot 2s infinite", flexShrink: 0 }} />;
 }
 
-function SkillBar({ name, level, delay = 0 }) {
-  const [animated, setAnimated] = useState(false);
-  const ref = useRef();
-
+function CountUp({ value, suffix, duration = 1300 }) {
+  const [display, setDisplay] = useState(0);
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setAnimated(true); },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
+    const startTime = performance.now();
+    const tick = (now) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(value * eased));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [value, duration]);
+  return <span>{display}{suffix}</span>;
+}
 
+function ServiceCard({ service }) {
+  const [hovered, setHovered] = useState(false);
   return (
-    <div ref={ref} style={{ marginBottom: "14px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-        <span style={{ color: COLORS.textDim, fontSize: "13px", fontFamily: "'JetBrains Mono', monospace" }}>{name}</span>
-        <span style={{ color: COLORS.accentYellow, fontSize: "12px", fontFamily: "'JetBrains Mono', monospace" }}>{level}%</span>
+    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      style={{ position: "relative", background: COLORS.bgPanel, border: `1px solid ${hovered ? COLORS.accent : COLORS.border}`, borderRadius: "16px", padding: "30px 32px", transition: "all 0.25s ease", boxShadow: hovered ? `0 0 0 1px ${COLORS.accent}50, 0 20px 45px ${COLORS.accent}1a` : "none" }}>
+      <span style={{ position: "absolute", bottom: "12px", right: "12px", width: "16px", height: "16px", borderBottom: `2px solid ${COLORS.accentBright}`, borderRight: `2px solid ${COLORS.accentBright}`, borderBottomRightRadius: "4px", opacity: hovered ? 1 : 0, transition: "opacity 0.25s ease" }} />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "18px" }}>
+        <span style={{ fontFamily: "'Sora', sans-serif", fontSize: "28px", fontWeight: 800, color: COLORS.borderStrong }}>{service.num}</span>
+        <span style={{ display: "flex", alignItems: "center", gap: "6px", background: `${COLORS.status}12`, border: `1px solid ${COLORS.status}35`, borderRadius: "100px", padding: "4px 10px" }}>
+          <StatusDot /><span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "9.5px", color: COLORS.status, letterSpacing: "0.5px" }}>ONLINE</span>
+        </span>
       </div>
-      <div style={{ height: "4px", background: COLORS.border, borderRadius: "2px", overflow: "hidden" }}>
-        <div style={{
-          height: "100%",
-          width: animated ? `${level}%` : "0%",
-          background: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.accentGlow})`,
-          borderRadius: "2px",
-          transition: `width 1s ease ${delay}ms`,
-          boxShadow: animated ? `0 0 8px ${COLORS.accentGlow}60` : "none",
-        }} />
+      <h3 style={{ margin: "0 0 10px", color: hovered ? COLORS.accentBright : COLORS.text, fontSize: "19px", fontFamily: "'Sora', sans-serif", fontWeight: 700, transition: "color 0.2s ease" }}>{service.title}</h3>
+      <p style={{ color: COLORS.textMuted, fontSize: "13.5px", lineHeight: "1.65", marginBottom: "26px" }}>{service.description}</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px dashed ${COLORS.border}`, paddingTop: "16px" }}>
+        <span style={{ color: hovered ? COLORS.accentBright : COLORS.textFaint, fontSize: "11px", letterSpacing: "2px", transition: "color 0.2s ease" }}>· · ·</span>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "11.5px", fontWeight: 600, color: hovered ? COLORS.accentBright : COLORS.textFaint, transition: "color 0.2s ease" }}>{hovered ? "> EXECUTE" : "EXECUTE"}</span>
       </div>
     </div>
   );
 }
 
-function ProjectCard({ project }) {
-  const [hovered, setHovered] = useState(false);
+function TimelineEntry({ entry, isLast }) {
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? COLORS.bgCardHover : COLORS.bgCard,
-        border: `1px solid ${hovered ? COLORS.borderGlow : COLORS.border}`,
-        borderRadius: "16px", padding: "32px",
-        transition: "all 0.3s ease",
-        boxShadow: hovered ? `0 0 30px ${COLORS.accent}20, 0 8px 32px rgba(0,0,0,0.4)` : "0 4px 16px rgba(0,0,0,0.3)",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "16px", marginBottom: "20px" }}>
-        <div style={{
-          width: "52px", height: "52px",
-          background: `${project.color}20`,
-          border: `1px solid ${project.color}40`,
-          borderRadius: "12px",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "24px", flexShrink: 0,
-        }}>
-          {project.icon}
-        </div>
-        <div>
-          <h3 style={{ margin: 0, color: COLORS.text, fontSize: "20px", fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>
-            {project.name}
-          </h3>
-          <p style={{ margin: "4px 0 0", color: COLORS.textMuted, fontSize: "13px", fontFamily: "'JetBrains Mono', monospace" }}>
-            {project.subtitle}
+    <div style={{ display: "flex", gap: "20px" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "6px" }}>
+        <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: COLORS.accentBright, boxShadow: `0 0 0 4px ${COLORS.accentSoft}`, flexShrink: 0 }} />
+        {!isLast && <span style={{ width: "1px", flex: 1, background: COLORS.border, marginTop: "6px" }} />}
+      </div>
+      <div style={{ flex: 1, paddingBottom: "32px" }}>
+        <span style={{ display: "inline-block", fontFamily: "'JetBrains Mono', monospace", fontSize: "11px", color: COLORS.accentBright, border: `1px solid ${COLORS.accent}40`, borderRadius: "6px", padding: "4px 10px", marginBottom: "14px" }}>
+          [ TIMESTAMP: {entry.timestamp} ]
+        </span>
+        <h4 style={{ margin: "0 0 6px", color: COLORS.text, fontSize: "19px", fontFamily: "'Sora', sans-serif", fontWeight: 700 }}>{entry.title}</h4>
+        <p style={{ margin: "0 0 14px", color: COLORS.accentBright, fontSize: "13px", fontFamily: "'Inter', sans-serif" }}>• {entry.org}</p>
+        <div style={{ background: COLORS.bgPanelAlt, border: `1px solid ${COLORS.border}`, borderRadius: "10px", padding: "16px 18px" }}>
+          <p style={{ color: COLORS.textMuted, fontSize: "13.5px", lineHeight: "1.7" }}>
+            <span style={{ color: COLORS.accentBright }}>&gt; </span>{entry.detail}
           </p>
         </div>
       </div>
-
-      <p style={{ color: COLORS.textDim, fontSize: "14px", lineHeight: "1.7", marginBottom: "20px" }}>
-        {project.description}
-      </p>
-
-      <div style={{ marginBottom: "24px" }}>
-        {project.highlights.map((h, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "8px" }}>
-            <span style={{ color: COLORS.accentGreen, fontSize: "12px", marginTop: "2px", flexShrink: 0 }}>▹</span>
-            <span style={{ color: COLORS.textDim, fontSize: "13px", lineHeight: "1.5" }}>{h}</span>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "24px" }}>
-        {project.tech.map((t) => (
-          <span key={t} style={{
-            background: `${COLORS.accent}15`,
-            border: `1px solid ${COLORS.accent}30`,
-            color: COLORS.accentGlow,
-            padding: "4px 10px", borderRadius: "6px",
-            fontSize: "12px", fontFamily: "'JetBrains Mono', monospace",
-          }}>
-            {t}
-          </span>
-        ))}
-      </div>
-
-      <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-        <a
-          href={project.github}
-          target="_blank"
-          rel="noreferrer"
-          style={{
-            display: "inline-flex", alignItems: "center", gap: "6px",
-            color: COLORS.textDim, textDecoration: "none",
-            fontSize: "13px", fontFamily: "'JetBrains Mono', monospace",
-            padding: "8px 16px",
-            border: `1px solid ${COLORS.border}`,
-            borderRadius: "8px", transition: "all 0.2s ease",
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; e.currentTarget.style.color = COLORS.text; }}
-          onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.color = COLORS.textDim; }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-          </svg>
-          Ver en GitHub
-        </a>
-        {project.website && (
-          <a
-            href={project.website}
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              display: "inline-flex", alignItems: "center", gap: "6px",
-              color: COLORS.textDim, textDecoration: "none",
-              fontSize: "13px", fontFamily: "'JetBrains Mono', monospace",
-              padding: "8px 16px",
-              border: `1px solid ${COLORS.border}`,
-              borderRadius: "8px", transition: "all 0.2s ease",
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accentGreen; e.currentTarget.style.color = COLORS.text; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.color = COLORS.textDim; }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="2" y1="12" x2="22" y2="12" />
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-            </svg>
-            electrohome.site
-          </a>
-        )}
-      </div>
     </div>
   );
 }
 
+/* ============================================================
+   Componente principal — navegación por páginas
+   ============================================================ */
 export default function Portfolio() {
-  const [activeSection, setActiveSection] = useState("hero");
+  const [page, setPage] = useState("hero");
   const [titleDone, setTitleDone] = useState(false);
-  const [subtitleDone, setSubtitleDone] = useState(false);
+  const [lang, setLang] = useState("ES");
+  const [cvTab, setCvTab] = useState("experiencia");
 
-  const sections = useMemo(() => ["hero", "sobre-mi", "habilidades", "proyectos", "contacto"], []);
-  const sectionLabels = useMemo(() => ["Inicio", "Sobre mí", "Habilidades", "Proyectos", "Contacto"], []);
+  const pages = ["hero", "servicios", "curriculum", "proyectos", "contacto"];
+  const pageLabels = ["Inicio", "Servicios", "Currículum", "Proyectos", "Contacto"];
 
-  const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const cvTabs = [
+    { key: "experiencia", label: "./experiencia" },
+    { key: "educacion", label: "./educación" },
+    { key: "habilidades", label: "./habilidades" },
+    { key: "sobre_mi", label: "./sobre_mí" },
+  ];
+
+  const goTo = (id) => {
+    setPage(id);
+    window.scrollTo({ top: 0, behavior: "auto" });
   };
-
-  // FIX #1 — Línea 254: se agrega 'sections' al array de dependencias
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => { if (e.isIntersecting) setActiveSection(e.target.id); });
-      },
-      { threshold: 0.4 }
-    );
-    sections.forEach((s) => {
-      const el = document.getElementById(s);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, [sections]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div style={{ background: COLORS.bg, minHeight: "100vh", color: COLORS.text, fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0a0e1a; }
-        ::-webkit-scrollbar-thumb { background: #1e2d4a; border-radius: 2px; }
+        ::-webkit-scrollbar-track { background: ${COLORS.bg}; }
+        ::-webkit-scrollbar-thumb { background: ${COLORS.border}; border-radius: 2px; }
+
         @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0 } }
-        @keyframes fadeUp { from { opacity:0; transform:translateY(24px) } to { opacity:1; transform:translateY(0) } }
-        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4) } 50% { box-shadow: 0 0 0 8px rgba(16,185,129,0) } }
-        @keyframes float { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-8px) } }
-        .section { min-height: 100vh; padding: 100px 24px; max-width: 900px; margin: 0 auto; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(18px) } to { opacity:1; transform:translateY(0) } }
+        @keyframes pulseDot { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4) } 50% { box-shadow: 0 0 0 6px rgba(34,197,94,0) } }
+
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+        }
+
+        .page { min-height: 100vh; padding: 116px 24px 70px; max-width: 1080px; margin: 0 auto; animation: fadeUp 0.4s ease both; }
         .grid-bg {
           position: fixed; inset: 0; z-index: 0; pointer-events: none;
-          background-image: linear-gradient(#1e2d4a18 1px, transparent 1px), linear-gradient(90deg, #1e2d4a18 1px, transparent 1px);
-          background-size: 40px 40px;
-          mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+          background-image: linear-gradient(${COLORS.border}35 1px, transparent 1px), linear-gradient(90deg, ${COLORS.border}35 1px, transparent 1px);
+          background-size: 34px 34px;
         }
-        .glow-orb { position: fixed; border-radius: 50%; filter: blur(100px); pointer-events: none; z-index: 0; }
-        .sobre-mi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-        .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .contacto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        @media (max-width: 640px) {
-          .sobre-mi-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
-          .skills-grid { grid-template-columns: 1fr !important; }
-          .contacto-grid { grid-template-columns: 1fr !important; }
-          .nav-links button { font-size: 10px !important; padding: 4px 6px !important; }
-          .nav-dots { display: none !important; }
+        .glow-orb { position: fixed; border-radius: 50%; filter: blur(130px); pointer-events: none; z-index: 0; }
+
+        .hero-grid { display: grid; grid-template-columns: 1fr 360px; gap: 56px; align-items: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 56px; }
+        .cv-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .cv-grid { display: grid; grid-template-columns: 240px 1fr; gap: 40px; align-items: start; }
+        .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 14px; max-width: 420px; }
+        .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; }
+
+        @media (max-width: 780px) {
+          .hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .cv-grid { grid-template-columns: 1fr !important; }
+          .services-grid { grid-template-columns: 1fr !important; }
+          .fields-grid { grid-template-columns: 1fr !important; }
+          .nav-links { display: none !important; }
         }
       `}</style>
 
       <div className="grid-bg" />
-      <div className="glow-orb" style={{ width: "400px", height: "400px", background: "#2563eb12", top: "-100px", right: "-100px" }} />
-      <div className="glow-orb" style={{ width: "300px", height: "300px", background: "#f59e0b08", bottom: "10%", left: "-80px" }} />
+      <div className="glow-orb" style={{ width: "460px", height: "460px", background: "#2f7cff14", top: "-140px", right: "-90px" }} />
+      <div className="glow-orb" style={{ width: "340px", height: "340px", background: "#2f7cff0a", bottom: "10%", left: "-100px" }} />
 
       {/* NAV */}
-      <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background: "#0a0e1ae0", backdropFilter: "blur(20px)",
-        borderBottom: "1px solid #1e2d4a",
-        padding: "0 32px", height: "60px",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accentYellow, fontSize: "14px", fontWeight: 700 }}>
-          alan<span style={{ color: COLORS.accent }}>.</span>dev
-        </span>
-        <div className="nav-links" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          {sectionLabels.map((label, i) => (
-            <button key={label} onClick={() => scrollTo(sections[i])} style={{
-              background: activeSection === sections[i] ? `${COLORS.accent}20` : "transparent",
-              border: "none", cursor: "pointer",
-              color: activeSection === sections[i] ? COLORS.text : COLORS.textMuted,
-              fontSize: "13px", fontFamily: "'JetBrains Mono', monospace",
-              padding: "6px 14px", borderRadius: "6px", transition: "all 0.2s",
-            }}>
-              {label}
+      <nav style={{ position: "fixed", top: "18px", left: "50%", transform: "translateX(-50%)", zIndex: 100, background: "#0e131bee", backdropFilter: "blur(18px)", border: `1px solid ${COLORS.border}`, borderRadius: "100px", padding: "8px 10px 8px 16px", display: "flex", alignItems: "center", gap: "6px", maxWidth: "94vw" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginRight: "10px" }}>
+          <span style={{ width: "26px", height: "26px", borderRadius: "50%", border: `1.5px solid ${COLORS.accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Sora', sans-serif", fontSize: "12px", fontWeight: 800, color: COLORS.accentBright, flexShrink: 0 }}>A</span>
+          <span style={{ fontFamily: "'Sora', sans-serif", color: COLORS.text, fontSize: "14px", fontWeight: 700, whiteSpace: "nowrap" }}>alan<span style={{ color: COLORS.accent }}>.dev</span></span>
+        </div>
+        <div className="nav-links" style={{ display: "flex", gap: "2px", alignItems: "center" }}>
+          {pageLabels.map((label, i) => (
+            <button key={label} onClick={() => goTo(pages[i])} style={{ background: page === pages[i] ? COLORS.accentSoft : "transparent", border: page === pages[i] ? `1px solid ${COLORS.accent}60` : "1px solid transparent", borderRadius: "100px", cursor: "pointer", color: page === pages[i] ? COLORS.accentBright : COLORS.textFaint, fontSize: "11.5px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, padding: "8px 14px", letterSpacing: "0.5px", transition: "all 0.2s" }}>
+              {label.toUpperCase()}
             </button>
           ))}
         </div>
-        <div className="nav-dots" style={{ display: "flex", gap: "6px", alignItems: "center" }}>
-          {sections.map((s, i) => (
-            <NavDot key={s} active={activeSection === s} onClick={() => scrollTo(s)} label={sectionLabels[i]} />
+        <button onClick={() => goTo("contacto")} style={{ background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentBright})`, color: "#fff", border: "none", padding: "9px 18px", borderRadius: "100px", fontSize: "12.5px", fontFamily: "'Inter', sans-serif", fontWeight: 600, cursor: "pointer", marginLeft: "8px", whiteSpace: "nowrap" }}>Contrátame ➤</button>
+        <div style={{ display: "flex", border: `1px solid ${COLORS.border}`, borderRadius: "100px", overflow: "hidden", marginLeft: "6px" }}>
+          {["ES", "EN"].map((l) => (
+            <button key={l} onClick={() => setLang(l)} style={{ background: lang === l ? COLORS.accentSoft : "transparent", border: "none", color: lang === l ? COLORS.accentBright : COLORS.textFaint, fontSize: "10.5px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "7px 10px", cursor: "pointer" }}>{l}</button>
           ))}
         </div>
       </nav>
 
-      {/* HERO */}
-      <section id="hero" className="section" style={{ display: "flex", flexDirection: "column", justifyContent: "center", position: "relative", zIndex: 1 }}>
-        <div style={{ animation: "fadeUp 0.8s ease both", display: "flex", alignItems: "center", gap: "64px", flexWrap: "wrap" }}>
-
-          {/* Foto */}
-          <div style={{ flexShrink: 0, position: "relative" }}>
-            <div style={{
-              width: "220px", height: "220px", borderRadius: "50%",
-              border: `3px solid ${COLORS.accent}`,
-              padding: "4px",
-              boxShadow: `0 0 40px ${COLORS.accent}40`,
-              animation: "float 4s ease-in-out infinite",
-            }}>
-              <img
-                src={fotoAlan}
-                alt="Alan David Coneo"
-                style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", objectPosition: "center top" }}
-              />
-            </div>
-            <div style={{
-              position: "absolute", bottom: "10px", right: "-10px",
-              background: COLORS.bgCard, border: `1px solid ${COLORS.accentGreen}40`,
-              borderRadius: "100px", padding: "6px 12px",
-              display: "flex", alignItems: "center", gap: "6px",
-            }}>
-              <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: COLORS.accentGreen, animation: "pulse 2s infinite", flexShrink: 0 }} />
-              <span style={{ color: COLORS.accentGreen, fontSize: "11px", fontFamily: "'JetBrains Mono', monospace", whiteSpace: "nowrap" }}>disponible</span>
-            </div>
-          </div>
-
-          {/* Texto */}
-          <div style={{ flex: 1, minWidth: "280px" }}>
-            <div style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.textMuted, fontSize: "14px", marginBottom: "12px" }}>
-              <span style={{ color: COLORS.accent }}>const</span> dev = <span style={{ color: COLORS.accentYellow }}>"Alan David Coneo"</span>;
-            </div>
-
-            <h1 style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: "clamp(36px, 6vw, 64px)",
-              fontWeight: 700, lineHeight: 1.05, marginBottom: "16px",
-              background: `linear-gradient(135deg, ${COLORS.text} 40%, ${COLORS.accentGlow})`,
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-            }}>
-              <TerminalText text="Alan David" speed={60} onDone={() => setTitleDone(true)} />
-              {titleDone && <><br /><TerminalText text="Coneo Rodríguez" speed={60} onDone={() => setSubtitleDone(true)} /></>}
-            </h1>
-
-            {subtitleDone && (
-              <div style={{ animation: "fadeUp 0.5s ease both" }}>
-                <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "clamp(13px, 2vw, 16px)", color: COLORS.accent, marginBottom: "16px", fontWeight: 500 }}>
-                  Tecnólogo en Análisis y Desarrollo de Software
-                </p>
-                <p style={{ color: COLORS.textDim, fontSize: "15px", lineHeight: "1.8", maxWidth: "520px", marginBottom: "36px" }}>
-                  Apasionado por construir soluciones web completas — desde el backend hasta la interfaz.
-                  Especializado en <span style={{ color: COLORS.text }}>Python / Django / Node.js</span> y experiencia con React, PostgreSQL, MongoDB, MySQL y APIs modernas.
-                </p>
-                <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                  <button onClick={() => scrollTo("proyectos")} style={{
-                    background: COLORS.accent, color: "#fff", border: "none",
-                    padding: "12px 28px", borderRadius: "10px", fontSize: "14px",
-                    fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
-                    cursor: "pointer", transition: "all 0.2s ease",
-                    boxShadow: `0 4px 20px ${COLORS.accent}40`,
-                  }}
-                    onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}
-                  >
-                    Ver proyectos →
-                  </button>
-                  <button onClick={() => scrollTo("contacto")} style={{
-                    background: "transparent", color: COLORS.textDim,
-                    border: `1px solid ${COLORS.border}`, padding: "12px 28px",
-                    borderRadius: "10px", fontSize: "14px",
-                    fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600,
-                    cursor: "pointer", transition: "all 0.2s ease",
-                  }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; e.currentTarget.style.color = COLORS.text; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.color = COLORS.textDim; }}
-                  >
-                    Contacto
-                  </button>
-                </div>
+      {/* PÁGINA: INICIO */}
+      {page === "hero" && (
+        <section className="page" style={{ display: "flex", flexDirection: "column", justifyContent: "center", position: "relative", zIndex: 1 }}>
+          <div className="hero-grid">
+            <div>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "100px", padding: "7px 16px", marginBottom: "26px" }}>
+                <StatusDot />
+                <span style={{ color: COLORS.textMuted, fontSize: "11.5px", fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.5px" }}>DESARROLLADOR FULL-STACK & FREELANCE</span>
               </div>
-            )}
+              <h1 style={{ fontFamily: "'Sora', sans-serif", fontSize: "clamp(38px, 5.6vw, 60px)", fontWeight: 800, lineHeight: 1.06, marginBottom: "20px", color: COLORS.text }}>
+                Hola, soy<br />
+                <span style={{ color: COLORS.accentBright }}><TerminalText text="Alan Coneo" speed={48} onDone={() => setTitleDone(true)} /></span>
+              </h1>
+              {titleDone && (
+                <div style={{ animation: "fadeUp 0.5s ease both" }}>
+                  <p style={{ color: COLORS.textMuted, fontSize: "16px", lineHeight: "1.85", maxWidth: "540px", marginBottom: "32px" }}>
+                    Desarrollador de software apasionado por la creación de soluciones digitales eficientes, escalables y orientadas a resultados.
+                  </p>
+                  <div className="cv-row" style={{ marginBottom: "26px" }}>
+                    <button onClick={() => goTo("curriculum")} style={{ display: "inline-flex", alignItems: "center", gap: "10px", border: `1px solid ${COLORS.accent}`, borderRadius: "10px", padding: "13px 22px", color: COLORS.accentBright, fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", fontWeight: 600, background: COLORS.accentSoft, cursor: "pointer" }}>
+                      &gt;_ VER_CURRÍCULUM
+                    </button>
+                    {socialRow.map((s) => (
+                      <a key={s.label} href={s.href} target="_blank" rel="noreferrer" title={s.title} style={{ width: "44px", height: "44px", display: "flex", alignItems: "center", justifyContent: "center", background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "10px", color: COLORS.textMuted, fontFamily: "'JetBrains Mono', monospace", fontSize: "11px", fontWeight: 700, textDecoration: "none", transition: "all 0.2s ease" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; e.currentTarget.style.color = COLORS.accentBright; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.color = COLORS.textMuted; }}>
+                        {s.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div style={{ position: "relative", justifySelf: "center" }}>
+              <div style={{ position: "relative", width: "320px", maxWidth: "78vw", aspectRatio: "1 / 1.12", borderRadius: "20px", overflow: "hidden", border: `1px solid ${COLORS.borderStrong}`, boxShadow: `0 0 0 1px ${COLORS.bg}, 0 30px 60px rgba(0,0,0,0.5)` }}>
+                <img src={fotoAlan} alt="Alan Coneo" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+                <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 1px ${COLORS.accent}25` }} />
+              </div>
+              <div style={{ position: "absolute", bottom: "-16px", right: "-8px", background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "100px", padding: "9px 18px", display: "flex", alignItems: "center", gap: "8px", whiteSpace: "nowrap", boxShadow: "0 10px 30px rgba(0,0,0,0.45)" }}>
+                <StatusDot /><span style={{ color: COLORS.text, fontSize: "12px", fontFamily: "'Inter', sans-serif", fontWeight: 500 }}>Disponible para proyectos</span>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div style={{ position: "absolute", bottom: "40px", left: "50%", transform: "translateX(-50%)", animation: "float 2s ease-in-out infinite", opacity: 0.4 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2">
-            <path d="M12 5v14M5 12l7 7 7-7" />
-          </svg>
-        </div>
-      </section>
-
-      {/* SOBRE MÍ */}
-      <section id="sobre-mi" className="section" style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ marginBottom: "48px", textAlign: "center"}}>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
-            {/* 01. sobre_mi */}
-          </p>
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Sobre mí</h2>
-        </div>
-
-        <div className="sobre-mi-grid">
-          <div>
-            <p style={{ color: COLORS.textDim, lineHeight: "1.9", fontSize: "15px", marginBottom: "20px" }}>
-              Soy <span style={{ color: COLORS.text }}>Tecnólogo en Análisis y Desarrollo de Software</span>, con pasión por construir productos digitales que resuelvan problemas reales.
-            </p>
-            <p style={{ color: COLORS.textDim, lineHeight: "1.9", fontSize: "15px", marginBottom: "20px" }}>
-              Desarrollador <span style={{ color: COLORS.text }}>Fullstack</span> con dominio en <span style={{ color: COLORS.text }}>Python / Django</span> y <span style={{ color: COLORS.text }}>Node.js</span> en el backend, y <span style={{ color: COLORS.text }}>React</span> con Tailwind CSS en el frontend — capaz de construir una aplicación completa de principio a fin.
-            </p>
-            <p style={{ color: COLORS.textDim, lineHeight: "1.9", fontSize: "15px" }}>
-              Me caracterizo por la <span style={{ color: COLORS.text }}>eficacia en la resolución de problemas</span>, buen manejo del tiempo y capacidad de adaptación. Busco oportunidades para seguir creciendo profesionalmente.
-            </p>
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {[
-              { label: "Nombre", value: "Alan David Coneo Rodríguez" },
-              { label: "Ubicación", value: "Garzón, Huila — Colombia" },
-              { label: "Formación", value: "SENA — Tecnólogo en ADSO" },
-              { label: "Estado", value: "En formación (2024 - actualidad)" },
-              { label: "GitHub", value: "github.com/alan1130co" },
-              { label: "LinkedIn", value: "linkedin.com/in/alan-coneo-rodriguez" },
-              { label: "Email", value: "alanconeorodriguez1130@gmail.com" },
-              { label: "Teléfono", value: "311 874 1905" },
-            ].map(({ label, value }) => (
-              <div key={label} style={{
-                display: "flex", gap: "12px", padding: "10px 14px",
-                background: COLORS.bgCard, border: `1px solid ${COLORS.border}`, borderRadius: "10px",
-              }}>
-                <span style={{ color: COLORS.accentYellow, fontSize: "11px", fontFamily: "'JetBrains Mono', monospace", minWidth: "80px", paddingTop: "1px" }}>{label}:</span>
-                <span style={{ color: COLORS.textDim, fontSize: "12px", fontFamily: "'JetBrains Mono', monospace", wordBreak: "break-all" }}>{value}</span>
+          <div className="stats-grid">
+            {stats.map((s) => (
+              <div key={s.label} style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "14px", padding: "22px 16px" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "2px", fontFamily: "'Sora', sans-serif", fontSize: "30px", fontWeight: 800, color: COLORS.text, marginBottom: "6px" }}>
+                  <CountUp value={s.value} suffix="" /><span style={{ color: COLORS.accentBright }}>{s.suffix}</span>
+                </div>
+                <div style={{ color: COLORS.textFaint, fontSize: "10.5px", fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.5px" }}>{s.label}</div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
+      )}
 
-        <div style={{ marginTop: "40px" }}>
-          <p style={{ color: COLORS.textMuted, fontSize: "13px", fontFamily: "'JetBrains Mono', monospace", marginBottom: "16px" }}>habilidades_blandas:</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-            {softSkills.map((s) => (
-              <span key={s} style={{
-                background: `${COLORS.accentGreen}10`, border: `1px solid ${COLORS.accentGreen}25`,
-                color: COLORS.accentGreen, padding: "8px 16px", borderRadius: "100px",
-                fontSize: "13px", fontFamily: "'Space Grotesk', sans-serif",
-              }}>{s}</span>
-            ))}
+      {/* PÁGINA: SERVICIOS */}
+      {page === "servicios" && (
+        <section className="page" style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ marginBottom: "44px" }}>
+            <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accentBright, fontSize: "13px", marginBottom: "10px" }}>&gt; SERVICIOS</p>
+            <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: "34px", fontWeight: 800 }}>En qué puedo ayudarte</h2>
           </div>
-        </div>
-      </section>
+          <div className="services-grid">
+            {services.map((s) => <ServiceCard key={s.num} service={s} />)}
+          </div>
+        </section>
+      )}
 
-      {/* HABILIDADES */}
-      <section id="habilidades" className="section" style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ marginBottom: "48px", textAlign: "center"}}>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
-            {/* 02. habilidades_tecnicas */}
-          </p>
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Stack Técnico</h2>
-        </div>
-
-        <div className="skills-grid">
-          {Object.entries(skills).map(([category, items], ci) => (
-            <div key={category} style={{ background: COLORS.bgCard, border: `1px solid ${COLORS.border}`, borderRadius: "16px", padding: "28px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "24px" }}>
-                <div style={{
-                  width: "32px", height: "32px", borderRadius: "8px",
-                  background: ci === 0 ? `${COLORS.accent}20` : ci === 1 ? `${COLORS.accentYellow}20` : `${COLORS.accentGreen}20`,
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px",
-                }}>
-                  {ci === 0 ? "⚙" : ci === 1 ? "🎨" : "🗄"}
-                </div>
-                <span style={{
-                  fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", fontWeight: 500,
-                  color: ci === 0 ? COLORS.accentGlow : ci === 1 ? COLORS.accentYellow : COLORS.accentGreen,
-                }}>
-                  {category}
-                </span>
-              </div>
-              {items.map((skill, i) => (
-                <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={i * 100} />
+      {/* PÁGINA: CURRÍCULUM */}
+      {page === "curriculum" && (
+        <section className="page" style={{ position: "relative", zIndex: 1 }}>
+          <div className="cv-grid">
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {cvTabs.map((t) => (
+                <button key={t.key} onClick={() => setCvTab(t.key)} style={{ textAlign: "left", display: "flex", alignItems: "center", justifyContent: "space-between", background: cvTab === t.key ? COLORS.accentSoft : COLORS.bgPanel, border: `1px solid ${cvTab === t.key ? COLORS.accent : COLORS.border}`, borderRadius: "10px", padding: "14px 16px", cursor: "pointer", color: cvTab === t.key ? COLORS.accentBright : COLORS.textMuted, fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", fontWeight: 600, transition: "all 0.2s ease" }}>
+                  <span>&gt; {t.label}</span>
+                  {cvTab === t.key && <span style={{ width: "2px", height: "14px", background: COLORS.accentBright, animation: "blink 1s step-end infinite" }} />}
+                </button>
               ))}
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* PROYECTOS */}
-      <section id="proyectos" className="section" style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ marginBottom: "48px" , textAlign: "center" }}>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
-            {/* 03. proyectos */}
-          </p>
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Proyectos</h2>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          {projects.map((p) => <ProjectCard key={p.name} project={p} />)}
-        </div>
-      </section>
+            <div>
+              {cvTab === "experiencia" && (
+                <div>
+                  <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accentBright, fontSize: "13px", marginBottom: "8px" }}>&gt;</p>
+                  <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: "30px", fontWeight: 800, marginBottom: "34px" }}>Mi experiencia</h2>
+                  {experiencia.map((e, i) => <TimelineEntry key={e.title} entry={e} isLast={i === experiencia.length - 1} />)}
+                </div>
+              )}
 
-      {/* CONTACTO */}
-      <section id="contacto" className="section" style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ marginBottom: "48px", textAlign: "center"}}>
-          <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accent, fontSize: "13px", marginBottom: "8px" }}>
-            {/* 04. contacto */}
-          </p>
-          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "36px", fontWeight: 700 }}>Hablemos</h2>
-        </div>
+              {cvTab === "educacion" && (
+                <div>
+                  <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accentBright, fontSize: "13px", marginBottom: "8px" }}>&gt;</p>
+                  <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: "30px", fontWeight: 800, marginBottom: "34px" }}>Mi educación</h2>
+                  {educacion.map((e, i) => <TimelineEntry key={e.title} entry={e} isLast={i === educacion.length - 1} />)}
+                </div>
+              )}
 
-        <div className="contacto-grid">
-          {[
-            { icon: "📧", label: "Email", value: "alanconeorodriguez1130@gmail.com", href: "mailto:alanconeorodriguez1130@gmail.com" },
-            { icon: "📱", label: "Teléfono / WhatsApp", value: "311 874 1905", href: "https://wa.me/573118741905" },
-            { icon: "💻", label: "GitHub", value: "github.com/alan1130co", href: "https://github.com/alan1130co" },
-            { icon: "🔗", label: "LinkedIn", value: "linkedin.com/in/alan-coneo-rodriguez", href: "https://www.linkedin.com/in/alan-coneo-rodriguez-4b5612362" },
-          ].map(({ icon, label, value, href }) => (
-            <a key={label} href={href || "#"} target={href && !href.startsWith("mailto") ? "_blank" : undefined} rel="noreferrer"
-              style={{
-                display: "flex", alignItems: "center", gap: "16px",
-                background: COLORS.bgCard, border: `1px solid ${COLORS.border}`,
-                borderRadius: "14px", padding: "24px", textDecoration: "none",
-                transition: "all 0.2s ease", cursor: href ? "pointer" : "default",
-              }}
-              onMouseEnter={(e) => { if (href) { e.currentTarget.style.borderColor = COLORS.accent; e.currentTarget.style.transform = "translateY(-2px)"; } }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.transform = "translateY(0)"; }}
-            >
-              <div style={{
-                width: "44px", height: "44px", flexShrink: 0,
-                background: `${COLORS.accent}15`, borderRadius: "10px",
-                display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px",
-              }}>
-                {icon}
+              {cvTab === "habilidades" && (
+                <div>
+                  <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: "26px", fontWeight: 800, marginBottom: "10px" }}>Mis habilidades</h2>
+                  <p style={{ color: COLORS.textMuted, fontSize: "14px", lineHeight: "1.7", marginBottom: "36px", maxWidth: "460px" }}>
+                    Tecnologías y herramientas que domino para crear soluciones robustas y eficientes.
+                  </p>
+                  {skillGroups.map((group) => (
+                    <div key={group.label} style={{ marginBottom: "36px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
+                        <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "11px", color: COLORS.accentBright, letterSpacing: "2px", whiteSpace: "nowrap" }}>{group.label}</span>
+                        <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
+                      </div>
+                      <div className="icon-grid">
+                        {group.items.map((skill) => (
+                          <div key={skill.name} title={skill.name} style={{ aspectRatio: "1 / 1", background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: COLORS.textMuted, cursor: "default", transition: "all 0.2s ease" }}
+                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; e.currentTarget.style.color = COLORS.accentBright; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.color = COLORS.textMuted; }}>
+                            {skill.icon}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
+                      <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
+                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "11px", color: COLORS.accentBright, letterSpacing: "2px", whiteSpace: "nowrap" }}>HABILIDADES BLANDAS</span>
+                      <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                      {softSkills.map((s) => (
+                        <span key={s} style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, color: COLORS.textMuted, padding: "9px 16px", borderRadius: "100px", fontSize: "13px", fontFamily: "'Inter', sans-serif" }}>{s}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {cvTab === "sobre_mi" && (
+                <div style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "18px", padding: "36px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
+                    <span style={{ width: "34px", height: "34px", borderRadius: "50%", border: `2px solid ${COLORS.accentBright}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: COLORS.accentBright }} />
+                    </span>
+                    <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: "24px", fontWeight: 800 }}>¿Por qué contratarme?</h2>
+                  </div>
+                  <div style={{ height: "1px", background: COLORS.border, marginBottom: "24px" }} />
+                  <p style={{ color: COLORS.textMuted, fontSize: "15px", lineHeight: "1.9", marginBottom: "32px" }}>
+                    Aporto una combinación de disciplina, pensamiento crítico y una fuerte ética de trabajo. No busco solo cumplir con los objetivos, sino superarlos mediante la mejora constante y la atención al detalle. Si necesitas a alguien resolutivo, confiable y comprometido con entregar resultados impecables, estoy listo para empezar.
+                  </p>
+                  <div className="fields-grid">
+                    {perfilFields.map(([label, value]) => (
+                      <div key={label} style={{ borderLeft: `2px solid ${COLORS.accent}50`, paddingLeft: "14px" }}>
+                        <p style={{ color: COLORS.accentBright, fontSize: "10.5px", fontFamily: "'JetBrains Mono', monospace", marginBottom: "6px", letterSpacing: "0.5px" }}>{label}</p>
+                        <p style={{ color: COLORS.text, fontSize: "14.5px", fontWeight: 500 }}>{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* PÁGINA: PROYECTOS */}
+      {page === "proyectos" && (
+        <section className="page" style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ marginBottom: "44px" }}>
+            <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accentBright, fontSize: "13px", marginBottom: "10px" }}>&gt; PROYECTOS</p>
+            <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: "34px", fontWeight: 800 }}>Lo que he construido</h2>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
+            {projects.map((p) => (
+              <div key={p.id} style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "18px", overflow: "hidden" }}>
+                <div style={{ padding: "22px 28px 0" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "12px", color: COLORS.textFaint }}>&gt;_ ~/logs/{p.id}</span>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10.5px", color: COLORS.accentBright, border: `1px solid ${COLORS.accent}50`, borderRadius: "100px", padding: "4px 10px" }}>[ {p.tag} ]</span>
+                  </div>
+                  <h3 style={{ margin: "0 0 4px", color: COLORS.text, fontSize: "24px", fontFamily: "'Sora', sans-serif", fontWeight: 700 }}>{p.name}</h3>
+                  <p style={{ margin: "0 0 16px", color: COLORS.accentBright, fontSize: "13px", fontFamily: "'JetBrains Mono', monospace" }}>{p.subtitle}</p>
+                  <p style={{ color: COLORS.textMuted, fontSize: "14px", lineHeight: "1.7", marginBottom: "20px" }}>{p.description}</p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "22px" }}>
+                    {p.tech.map((t) => (
+                      <span key={t.name} style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: COLORS.bgPanelAlt, border: `1px solid ${COLORS.border}`, borderRadius: "6px", padding: "5px 10px", fontSize: "12px", fontFamily: "'JetBrains Mono', monospace", color: COLORS.textMuted }}>
+                        <span>{t.icon}</span><span>{t.name}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: "flex", borderTop: `1px solid ${COLORS.border}`, background: COLORS.bgPanelAlt, borderBottomLeftRadius: "18px", borderBottomRightRadius: "18px" }}>
+                  <a href={p.website} target="_blank" rel="noreferrer" style={{ flex: 1, padding: "14px", textAlign: "center", color: COLORS.accentBright, fontFamily: "'JetBrains Mono', monospace", fontSize: "12px", fontWeight: 600, textDecoration: "none", borderRight: `1px solid ${COLORS.border}` }}>
+                    VER SITIO WEB ↗
+                  </a>
+                  <a href={p.github} target="_blank" rel="noreferrer" style={{ flex: 1, padding: "14px", textAlign: "center", color: COLORS.textMuted, fontFamily: "'JetBrains Mono', monospace", fontSize: "12px", fontWeight: 600, textDecoration: "none" }}>
+                    VER CÓDIGO GITHUB ↗
+                  </a>
+                </div>
               </div>
-              <div>
-                <p style={{ color: COLORS.textMuted, fontSize: "11px", fontFamily: "'JetBrains Mono', monospace", marginBottom: "4px" }}>{label}</p>
-                <p style={{ color: COLORS.text, fontSize: "13px", wordBreak: "break-all" }}>{value}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
 
-      {/* FOOTER */}
-      <footer style={{ borderTop: `1px solid ${COLORS.border}`, padding: "32px 24px", textAlign: "center", position: "relative", zIndex: 1 }}>
-        <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.textMuted, fontSize: "12px" }}>
-          <span style={{ color: COLORS.accent }}>©</span> 2025 Alan David Coneo Rodríguez
-          <span style={{ margin: "0 12px", color: COLORS.border }}>|</span>
-          Construido con <span style={{ color: "#ef4444" }}>♥</span> en React
-        </p>
-      </footer>
+      {/* PÁGINA: CONTACTO */}
+      {page === "contacto" && (
+        <section className="page" style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ marginBottom: "40px" }}>
+            <p style={{ fontFamily: "'JetBrains Mono', monospace", color: COLORS.accentBright, fontSize: "13px", marginBottom: "10px" }}>&gt; CONTACTO</p>
+            <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: "34px", fontWeight: 800 }}>Hablemos de tu proyecto</h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "18px" }}>
+            {contactCards.map((c) => (
+              <a key={c.num} href={c.href} target="_blank" rel="noreferrer" style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "16px", padding: "28px", textDecoration: "none", display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: "170px", transition: "all 0.2s ease" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = COLORS.accent; e.currentTarget.style.transform = "translateY(-3px)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = COLORS.border; e.currentTarget.style.transform = "translateY(0)"; }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <span style={{ fontFamily: "'Sora', sans-serif", fontSize: "24px", fontWeight: 800, color: COLORS.borderStrong }}>{c.num}</span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "10px", color: COLORS.accentBright, border: `1px solid ${COLORS.accent}40`, borderRadius: "6px", padding: "3px 8px" }}>{c.action}</span>
+                </div>
+                <div>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "11px", color: COLORS.textFaint, marginBottom: "6px" }}>{c.label}</div>
+                  <div style={{ color: COLORS.text, fontSize: "14px", fontFamily: "'Inter', sans-serif", fontWeight: 600, wordBreak: "break-all" }}>{c.value}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
