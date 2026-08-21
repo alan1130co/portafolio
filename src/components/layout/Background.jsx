@@ -84,13 +84,41 @@ export default function Background() {
         .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 14px; max-width: 420px; }
         .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; }
 
-        @media (max-width: 780px) {
-          .hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+        /* Stats row: relax to 2 columns from desktop-small down to tablet. */
+        @media (max-width: 1023px) {
           .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+
+        /* Nav: the full 5-link nav plus logo, wordmark, hire button and
+           language toggle needs ~950px of content, which doesn't reliably
+           fit a navbar narrower than ~1100px at desktop spacing (measured
+           directly — it's cutting it close even at 1024px). So tablet AND
+           small desktop (up through 1099px) get the same compact/hamburger
+           navbar as mobile; the full horizontal nav only shows from 1100px
+           up, comfortably inside "desktop grande" territory. */
+        @media (max-width: 1099px) {
+          .nav-links { display: none !important; }
+          .mobile-menu-btn { display: flex !important; }
+          .navbar-root { padding: 10px 16px !important; gap: 8px !important; }
+          .navbar-hire { padding: 10px 16px !important; font-size: 12px !important; }
+          .navbar-lang-toggle button { padding: 8px 10px !important; font-size: 10.5px !important; }
+        }
+
+        /* Mobile (below md, 768px): stack the two-column content layouts. */
+        @media (max-width: 767px) {
+          .hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .cv-grid { grid-template-columns: 1fr !important; }
+          .cv-sidebar { flex-direction: row !important; flex-wrap: wrap !important; }
           .services-grid { grid-template-columns: 1fr !important; }
           .fields-grid { grid-template-columns: 1fr !important; }
-          .nav-links { display: none !important; }
+        }
+
+        /* Small phones (below sm, 640px): the 2-up stats row is still tight
+           with 4-digit counters, and the wordmark competes with the hire
+           button + language toggle for space. */
+        @media (max-width: 639px) {
+          .stats-grid { grid-template-columns: 1fr !important; }
+          .navbar-wordmark { display: none !important; }
         }
       `}</style>
 
