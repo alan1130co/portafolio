@@ -7,7 +7,7 @@ import TerminalText from "../common/TerminalText";
 import CountUp from "../common/CountUp";
 import SocialIcon from "../common/SocialIcon";
 import { socialRow } from "../../data/contact";
-import fotoAlan from "../../img_principal_hojadevida.png";
+import fotoAlan from "../../img_principal_hojadevida.jpg";
 
 const nameGradientStyle = {
   backgroundImage: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.accentBright} 55%, ${COLORS.accentPale})`,
