@@ -7,7 +7,8 @@ import TerminalText from "../common/TerminalText";
 import CountUp from "../common/CountUp";
 import SocialIcon from "../common/SocialIcon";
 import { socialRow } from "../../data/contact";
-import fotoAlan from "../../img_principal_hojadevida.jpg";
+import fotoAlanWebp from "../../assets/img/hero-photo.webp";
+import fotoAlanJpg from "../../assets/img/hero-photo.jpg";
 
 const nameGradientStyle = {
   backgroundImage: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.accentBright} 55%, ${COLORS.accentPale})`,
@@ -54,7 +55,10 @@ export default function Hero({ goTo }) {
         </div>
         <div style={{ position: "relative", justifySelf: "center" }}>
           <div style={{ position: "relative", width: "320px", maxWidth: "78vw", aspectRatio: "1 / 1.12", borderRadius: "20px", overflow: "hidden", border: `1px solid ${COLORS.borderStrong}`, boxShadow: `0 0 0 1px ${COLORS.bg}, 0 30px 60px rgba(0,0,0,0.5)` }}>
-            <img src={fotoAlan} alt="Alan Coneo" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+            <picture>
+              <source srcSet={fotoAlanWebp} type="image/webp" />
+              <img src={fotoAlanJpg} alt="Alan Coneo" fetchPriority="high" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+            </picture>
             <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 1px ${COLORS.accent}25` }} />
           </div>
           <div style={{ position: "absolute", bottom: "-16px", right: "-8px", background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "100px", padding: "9px 18px", display: "flex", alignItems: "center", gap: "8px", whiteSpace: "nowrap", boxShadow: "0 10px 30px rgba(0,0,0,0.45)" }}>

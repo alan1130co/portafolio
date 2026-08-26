@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { COLORS } from "./theme/colors";
 import { LanguageProvider } from "./context/LanguageContext";
 import Background from "./components/layout/Background";
 import Navbar from "./components/layout/Navbar";
 import LanguageTransitionOverlay from "./components/layout/LanguageTransitionOverlay";
 import Hero from "./components/Hero/Hero";
-import Services from "./components/Services/Services";
-import Resume from "./components/Resume/Resume";
-import Projects from "./components/Projects/Projects";
-import Contact from "./components/Contact/Contact";
+
+const Services = lazy(() => import("./components/Services/Services"));
+const Resume = lazy(() => import("./components/Resume/Resume"));
+const Projects = lazy(() => import("./components/Projects/Projects"));
+const Contact = lazy(() => import("./components/Contact/Contact"));
 
 export default function Portfolio() {
   const [page, setPage] = useState("hero");
@@ -30,10 +31,12 @@ export default function Portfolio() {
         <Navbar page={page} goTo={goTo} />
 
         {page === "hero" && <Hero goTo={goTo} />}
-        {page === "servicios" && <Services />}
-        {page === "curriculum" && <Resume />}
-        {page === "proyectos" && <Projects />}
-        {page === "contacto" && <Contact />}
+        <Suspense fallback={null}>
+          {page === "servicios" && <Services />}
+          {page === "curriculum" && <Resume />}
+          {page === "proyectos" && <Projects />}
+          {page === "contacto" && <Contact />}
+        </Suspense>
 
         <LanguageTransitionOverlay />
       </div>
