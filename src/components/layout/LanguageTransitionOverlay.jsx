@@ -1,5 +1,5 @@
 import { COLORS } from "../../theme/colors";
-import { useLanguage } from "../../context/LanguageContext";
+import { useLanguageTransition } from "../../context/LanguageContext";
 
 const STATUS_TEXT = {
   es: "CONFIGURANDO SITIO EN ESPAÑOL...",
@@ -7,7 +7,7 @@ const STATUS_TEXT = {
 };
 
 export default function LanguageTransitionOverlay() {
-  const { phase, targetLang, sweepInMs, holdMs, sweepOutMs } = useLanguage();
+  const { phase, targetLang, sweepInMs, holdMs, sweepOutMs } = useLanguageTransition();
 
   if (phase === "idle") return null;
 

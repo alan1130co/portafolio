@@ -26,53 +26,110 @@ export default function Background() {
         }
         .glow-orb { position: fixed; border-radius: 50%; filter: blur(150px); pointer-events: none; z-index: 0; }
 
+        /* Hover glows used to animate box-shadow directly, which forces a
+           repaint every frame of the transition. Instead the glow lives on
+           an ::after sized to match the element (border-radius: inherit
+           picks up each instance's own inline radius) whose OPACITY is what
+           animates — opacity is compositor-only, same as transform. */
         .card-surface {
+          position: relative;
           background: linear-gradient(160deg, ${COLORS.bgPanelAlt}, ${COLORS.bgPanel});
           border: 1px solid ${COLORS.border}c0;
           box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.03) inset;
-          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+          transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .card-surface::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+          box-shadow: 0 22px 45px rgba(0,0,0,0.5), 0 0 28px 4px ${COLORS.accent}55;
         }
         .card-surface:hover {
           transform: translateY(-6px);
           border-color: ${COLORS.accent}90;
-          box-shadow: 0 22px 45px rgba(0,0,0,0.5), 0 0 28px 4px ${COLORS.accent}55;
+        }
+        .card-surface:hover::after {
+          opacity: 1;
         }
 
         .cv-button {
+          position: relative;
           background: ${COLORS.accentSoft};
           border: 1px solid ${COLORS.accentElectric};
           color: ${COLORS.accentBright};
-          transition: all 0.3s ease;
+          transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        .cv-button::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+          box-shadow: 0 10px 26px ${COLORS.accentElectric}55;
         }
         .cv-button:hover, .cv-button:active {
           background: ${COLORS.accentElectric};
           border-color: ${COLORS.accentElectric};
           color: #fff;
-          box-shadow: 0 10px 26px ${COLORS.accentElectric}55;
+        }
+        .cv-button:hover::after, .cv-button:active::after {
+          opacity: 1;
         }
 
         .social-icon {
+          position: relative;
           background: ${COLORS.bgPanel};
           border: 1px solid ${COLORS.border};
           color: ${COLORS.textMuted};
-          transition: all 0.3s ease;
+          transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        .social-icon::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+          box-shadow: 0 0 0 1px ${COLORS.accentElectric}55, 0 0 22px 4px ${COLORS.accentElectric}40;
         }
         .social-icon:hover, .social-icon:focus-visible {
           border-color: ${COLORS.accentElectric};
           color: ${COLORS.accentElectric};
-          box-shadow: 0 0 0 1px ${COLORS.accentElectric}55, 0 0 22px 4px ${COLORS.accentElectric}40;
+        }
+        .social-icon:hover::after, .social-icon:focus-visible::after {
+          opacity: 1;
         }
 
         .hire-button {
+          position: relative;
           background: linear-gradient(135deg, ${COLORS.accent}, ${COLORS.accentBright});
           color: #fff;
           box-shadow: 0 8px 20px ${COLORS.accent}40;
-          transition: all 0.3s ease;
+          transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .hire-button::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+          box-shadow: 0 12px 30px ${COLORS.accentElectric}70;
         }
         .hire-button:hover, .hire-button:active {
           background: linear-gradient(135deg, ${COLORS.accentBright}, ${COLORS.accentElectric});
-          box-shadow: 0 12px 30px ${COLORS.accentElectric}70;
           transform: translateY(-2px);
+        }
+        .hire-button:hover::after, .hire-button:active::after {
+          opacity: 1;
         }
 
         .hero-grid { display: grid; grid-template-columns: 1fr 360px; gap: 56px; align-items: center; }

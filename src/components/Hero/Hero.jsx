@@ -9,6 +9,13 @@ import SocialIcon from "../common/SocialIcon";
 import { socialRow } from "../../data/contact";
 import fotoAlanWebp from "../../assets/img/hero-photo.webp";
 import fotoAlanJpg from "../../assets/img/hero-photo.jpg";
+import fotoAlanWebpMobile from "../../assets/img/hero-photo-mobile.webp";
+import fotoAlanJpgMobile from "../../assets/img/hero-photo-mobile.jpg";
+
+// The photo box is fixed at 320px (capped at 78vw on narrow viewports) at
+// every breakpoint, so a 640w variant covers phones up to ~2x DPR while the
+// original 720w file still serves larger/high-DPI screens.
+const HERO_PHOTO_SIZES = "(max-width: 767px) 78vw, 320px";
 
 const nameGradientStyle = {
   backgroundImage: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.accentBright} 55%, ${COLORS.accentPale})`,
@@ -35,29 +42,41 @@ export default function Hero({ goTo }) {
             {t.hero.greeting}<br />
             <span style={nameGradientStyle}><TerminalText text="Alan Coneo" speed={48} onDone={() => setTitleDone(true)} /></span>
           </h1>
-          {titleDone && (
-            <div style={{ animation: "fadeUp 0.5s ease both" }}>
-              <p style={{ color: COLORS.textMuted, fontSize: "16px", lineHeight: "1.85", maxWidth: "540px", marginBottom: "32px" }}>
-                {t.hero.intro}
-              </p>
-              <div className="cv-row" style={{ marginBottom: "26px" }}>
-                <button onClick={() => goTo("curriculum")} className="cv-button" style={{ display: "inline-flex", alignItems: "center", gap: "10px", borderRadius: "10px", padding: "13px 22px", fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
-                  &gt;_ {t.hero.cvButton}
-                </button>
-                {socialRow.map((s) => (
-                  <a key={s.title} href={s.href} target="_blank" rel="noreferrer" title={s.title} className="social-icon" style={{ width: "44px", height: "44px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px", textDecoration: "none" }}>
-                    <SocialIcon name={s.icon} />
-                  </a>
-                ))}
-              </div>
+          <div
+            style={titleDone ? { animation: "fadeUp 0.5s ease both" } : { opacity: 0, pointerEvents: "none" }}
+            aria-hidden={!titleDone}
+          >
+            <p style={{ color: COLORS.textMuted, fontSize: "16px", lineHeight: "1.85", maxWidth: "540px", marginBottom: "32px" }}>
+              {t.hero.intro}
+            </p>
+            <div className="cv-row" style={{ marginBottom: "26px" }}>
+              <button onClick={() => goTo("curriculum")} className="cv-button" tabIndex={titleDone ? 0 : -1} style={{ display: "inline-flex", alignItems: "center", gap: "10px", borderRadius: "10px", padding: "13px 22px", fontFamily: "'JetBrains Mono', monospace", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+                &gt;_ {t.hero.cvButton}
+              </button>
+              {socialRow.map((s) => (
+                <a key={s.title} href={s.href} target="_blank" rel="noreferrer" title={s.title} className="social-icon" tabIndex={titleDone ? 0 : -1} style={{ width: "44px", height: "44px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px", textDecoration: "none" }}>
+                  <SocialIcon name={s.icon} />
+                </a>
+              ))}
             </div>
-          )}
+          </div>
         </div>
         <div style={{ position: "relative", justifySelf: "center" }}>
           <div style={{ position: "relative", width: "320px", maxWidth: "78vw", aspectRatio: "1 / 1.12", borderRadius: "20px", overflow: "hidden", border: `1px solid ${COLORS.borderStrong}`, boxShadow: `0 0 0 1px ${COLORS.bg}, 0 30px 60px rgba(0,0,0,0.5)` }}>
             <picture>
-              <source srcSet={fotoAlanWebp} type="image/webp" />
-              <img src={fotoAlanJpg} alt="Alan Coneo" fetchPriority="high" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+              <source
+                srcSet={`${fotoAlanWebpMobile} 640w, ${fotoAlanWebp} 720w`}
+                sizes={HERO_PHOTO_SIZES}
+                type="image/webp"
+              />
+              <img
+                src={fotoAlanJpg}
+                srcSet={`${fotoAlanJpgMobile} 640w, ${fotoAlanJpg} 720w`}
+                sizes={HERO_PHOTO_SIZES}
+                alt="Alan Coneo"
+                fetchPriority="high"
+                style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+              />
             </picture>
             <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 1px ${COLORS.accent}25` }} />
           </div>
@@ -67,12 +86,12 @@ export default function Hero({ goTo }) {
         </div>
       </div>
       <div className="stats-grid">
-        {t.stats.map((s) => {
+        {t.stats.map((s, i) => {
           const isAccentSuffix = s.suffix.includes("+");
           return (
             <div key={s.label} className={CARD_SURFACE_CLASS} style={{ borderRadius: "14px", padding: "22px 16px", background: "linear-gradient(160deg, #182030, #141b26)" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: "2px", fontFamily: "'Sora', sans-serif", fontSize: "30px", fontWeight: 800, color: COLORS.text, marginBottom: "6px" }}>
-                <CountUp value={s.value} suffix="" />
+                <CountUp value={s.value} suffix="" delay={i * 80} />
                 <span style={isAccentSuffix ? { color: COLORS.accentElectric, textShadow: `0 0 10px ${COLORS.accentElectric}, 0 0 22px ${COLORS.accentElectric}aa, 0 0 40px ${COLORS.accent}80` } : { color: COLORS.accentBright }}>{s.suffix}</span>
               </div>
               <div style={{ color: COLORS.textFaint, fontSize: "10.5px", fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.5px" }}>{s.label}</div>
