@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 
 // `delay` staggers the start of each instance so that when several CountUps

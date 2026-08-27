@@ -1,3 +1,5 @@
+"use client";
+
 import { COLORS } from "../../theme/colors";
 import { useLanguageTransition } from "../../context/LanguageContext";
 
@@ -48,7 +50,7 @@ export default function LanguageTransitionOverlay() {
       )}
       <div style={{
         position: "absolute", bottom: "28px", right: "28px",
-        fontFamily: "'JetBrains Mono', monospace",
+        fontFamily: "var(--font-jbmono), monospace",
         fontSize: "13px",
         fontWeight: 700,
         letterSpacing: "3px",

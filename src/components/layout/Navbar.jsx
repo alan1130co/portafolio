@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { COLORS } from "../../theme/colors";
 import { pages } from "../../data/navigation";
@@ -26,21 +28,21 @@ export default function Navbar({ page, goTo }) {
         boxShadow: `0 18px 44px rgba(0,0,0,0.5), 0 0 0 1px ${COLORS.accent}14, inset 0 1px 0 ${COLORS.borderStrong}40`,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
-          <span style={{ width: "46px", height: "46px", borderRadius: "50%", border: `2px solid ${COLORS.accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Sora', sans-serif", fontSize: "19px", fontWeight: 800, color: COLORS.accentBright, flexShrink: 0, boxShadow: `0 0 14px ${COLORS.accent}55` }}>A</span>
-          <span className="navbar-wordmark" style={{ fontFamily: "'Sora', sans-serif", color: COLORS.text, fontSize: "22px", fontWeight: 700, whiteSpace: "nowrap" }}>alan<span style={{ color: COLORS.accent }}>.dev</span></span>
+          <span style={{ width: "46px", height: "46px", borderRadius: "50%", border: `2px solid ${COLORS.accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-sora), sans-serif", fontSize: "19px", fontWeight: 800, color: COLORS.accentBright, flexShrink: 0, boxShadow: `0 0 14px ${COLORS.accent}55` }}>A</span>
+          <span className="navbar-wordmark" style={{ fontFamily: "var(--font-sora), sans-serif", color: COLORS.text, fontSize: "22px", fontWeight: 700, whiteSpace: "nowrap" }}>alan<span style={{ color: COLORS.accent }}>.dev</span></span>
         </div>
         <div className="nav-links" style={{ display: "flex", gap: "2px", alignItems: "center" }}>
           {t.nav.pageLabels.map((label, i) => (
-            <button key={label} className="nav-link-btn" onClick={() => goTo(pages[i])} style={{ background: page === pages[i] ? COLORS.accentSoft : "transparent", border: page === pages[i] ? `1px solid ${COLORS.accent}60` : "1px solid transparent", borderRadius: "100px", cursor: "pointer", color: page === pages[i] ? COLORS.accentBright : COLORS.textFaint, fontSize: "13px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, padding: "12px 18px", letterSpacing: "0.5px", transition: "all 0.2s", whiteSpace: "nowrap" }}>
+            <button key={label} className="nav-link-btn" onClick={() => goTo(pages[i])} style={{ background: page === pages[i] ? COLORS.accentSoft : "transparent", border: page === pages[i] ? `1px solid ${COLORS.accent}60` : "1px solid transparent", borderRadius: "100px", cursor: "pointer", color: page === pages[i] ? COLORS.accentBright : COLORS.textFaint, fontSize: "13px", fontFamily: "var(--font-jbmono), monospace", fontWeight: 600, padding: "12px 18px", letterSpacing: "0.5px", transition: "all 0.2s", whiteSpace: "nowrap" }}>
               {label.toUpperCase()}
             </button>
           ))}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <button onClick={() => goTo("contacto")} className="hire-button navbar-hire" style={{ border: "none", padding: "14px 26px", borderRadius: "100px", fontSize: "14px", fontFamily: "'Inter', sans-serif", fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>{t.nav.hireMe}</button>
+          <button onClick={() => goTo("contacto")} className="hire-button navbar-hire" style={{ border: "none", padding: "14px 26px", borderRadius: "100px", fontSize: "14px", fontFamily: "var(--font-inter), sans-serif", fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>{t.nav.hireMe}</button>
           <div className="navbar-lang-toggle" style={{ display: "flex", border: `1px solid ${COLORS.border}`, borderRadius: "100px", overflow: "hidden", flexShrink: 0 }}>
             {["ES", "EN"].map((l) => (
-              <button key={l} onClick={() => setLang(l.toLowerCase())} style={{ background: lang === l.toLowerCase() ? COLORS.accentSoft : "transparent", border: "none", color: lang === l.toLowerCase() ? COLORS.accentBright : COLORS.textFaint, fontSize: "12px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, padding: "11px 14px", cursor: "pointer" }}>{l}</button>
+              <button key={l} onClick={() => setLang(l.toLowerCase())} style={{ background: lang === l.toLowerCase() ? COLORS.accentSoft : "transparent", border: "none", color: lang === l.toLowerCase() ? COLORS.accentBright : COLORS.textFaint, fontSize: "12px", fontFamily: "var(--font-jbmono), monospace", fontWeight: 700, padding: "11px 14px", cursor: "pointer" }}>{l}</button>
             ))}
           </div>
           <button
@@ -74,7 +76,7 @@ export default function Navbar({ page, goTo }) {
           animation: "fadeUp 0.25s ease both",
         }}>
           {t.nav.pageLabels.map((label, i) => (
-            <button key={label} onClick={() => handleNav(pages[i])} style={{ textAlign: "left", background: page === pages[i] ? COLORS.accentSoft : "transparent", border: page === pages[i] ? `1px solid ${COLORS.accent}60` : "1px solid transparent", borderRadius: "10px", cursor: "pointer", color: page === pages[i] ? COLORS.accentBright : COLORS.textMuted, fontSize: "14px", fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, padding: "13px 16px", letterSpacing: "0.5px" }}>
+            <button key={label} onClick={() => handleNav(pages[i])} style={{ textAlign: "left", background: page === pages[i] ? COLORS.accentSoft : "transparent", border: page === pages[i] ? `1px solid ${COLORS.accent}60` : "1px solid transparent", borderRadius: "10px", cursor: "pointer", color: page === pages[i] ? COLORS.accentBright : COLORS.textMuted, fontSize: "14px", fontFamily: "var(--font-jbmono), monospace", fontWeight: 600, padding: "13px 16px", letterSpacing: "0.5px" }}>
               {label.toUpperCase()}
             </button>
           ))}
