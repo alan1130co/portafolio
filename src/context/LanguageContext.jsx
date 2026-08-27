@@ -4,6 +4,19 @@ import { translations } from "../data/translations";
 const SWEEP_IN_MS = 240;
 const HOLD_MS = 420;
 const SWEEP_OUT_MS = 220;
+const LANG_STORAGE_KEY = "lang";
+
+function getInitialLang() {
+  try {
+    const stored = window.localStorage.getItem(LANG_STORAGE_KEY);
+    if (stored === "es" || stored === "en") return stored;
+  } catch {
+    // localStorage unavailable (e.g. privacy mode) — fall through to navigator detection.
+  }
+  const browserLangs = window.navigator.languages || [window.navigator.language || ""];
+  const primary = browserLangs[0] || "";
+  return primary.toLowerCase().startsWith("es") ? "es" : "en";
+}
 
 // Split in two: content (lang/t) changes rarely, while transition (phase)
 // changes several times per language toggle. Keeping them in one context
@@ -13,10 +26,10 @@ const LanguageContentContext = createContext(null);
 const LanguageTransitionContext = createContext(null);
 
 export function LanguageProvider({ children }) {
-  const [lang, setLangState] = useState("es");
+  const [lang, setLangState] = useState(getInitialLang);
   const [phase, setPhase] = useState("idle"); // "idle" | "in" | "hold" | "out"
-  const [targetLang, setTargetLang] = useState("es");
-  const targetLangRef = useRef("es");
+  const [targetLang, setTargetLang] = useState(lang);
+  const targetLangRef = useRef(lang);
   const phaseRef = useRef("idle");
   const pendingRestartRef = useRef(false);
   const timersRef = useRef([]);
@@ -57,6 +70,11 @@ export function LanguageProvider({ children }) {
     if (nextLang === targetLangRef.current) return;
     targetLangRef.current = nextLang;
     setTargetLang(nextLang);
+    try {
+      window.localStorage.setItem(LANG_STORAGE_KEY, nextLang);
+    } catch {
+      // localStorage unavailable — preference just won't persist across visits.
+    }
 
     if (phaseRef.current === "idle") {
       startCycle();
