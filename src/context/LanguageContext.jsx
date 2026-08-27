@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
 import { translations } from "../data/translations";
 
@@ -5,18 +7,7 @@ const SWEEP_IN_MS = 240;
 const HOLD_MS = 420;
 const SWEEP_OUT_MS = 220;
 const LANG_STORAGE_KEY = "lang";
-
-function getInitialLang() {
-  try {
-    const stored = window.localStorage.getItem(LANG_STORAGE_KEY);
-    if (stored === "es" || stored === "en") return stored;
-  } catch {
-    // localStorage unavailable (e.g. privacy mode) — fall through to navigator detection.
-  }
-  const browserLangs = window.navigator.languages || [window.navigator.language || ""];
-  const primary = browserLangs[0] || "";
-  return primary.toLowerCase().startsWith("es") ? "es" : "en";
-}
+const LANG_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 
 // Split in two: content (lang/t) changes rarely, while transition (phase)
 // changes several times per language toggle. Keeping them in one context
@@ -25,11 +16,11 @@ function getInitialLang() {
 const LanguageContentContext = createContext(null);
 const LanguageTransitionContext = createContext(null);
 
-export function LanguageProvider({ children }) {
-  const [lang, setLangState] = useState(getInitialLang);
+export function LanguageProvider({ children, initialLang = "es" }) {
+  const [lang, setLangState] = useState(initialLang);
   const [phase, setPhase] = useState("idle"); // "idle" | "in" | "hold" | "out"
-  const [targetLang, setTargetLang] = useState(lang);
-  const targetLangRef = useRef(lang);
+  const [targetLang, setTargetLang] = useState(initialLang);
+  const targetLangRef = useRef(initialLang);
   const phaseRef = useRef("idle");
   const pendingRestartRef = useRef(false);
   const timersRef = useRef([]);
@@ -75,6 +66,11 @@ export function LanguageProvider({ children }) {
     } catch {
       // localStorage unavailable — preference just won't persist across visits.
     }
+    // Mirrored into a cookie (not just localStorage) so the server can read
+    // it on the next visit and render the right language in the initial
+    // HTML — avoids a hydration-mismatch flash that a client-only read
+    // would cause now that this renders server-side.
+    document.cookie = `${LANG_STORAGE_KEY}=${nextLang}; path=/; max-age=${LANG_COOKIE_MAX_AGE}; SameSite=Lax`;
 
     if (phaseRef.current === "idle") {
       startCycle();
