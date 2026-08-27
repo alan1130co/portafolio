@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, lazy, useState } from "react";
 import { COLORS } from "./theme/colors";
 import { LanguageProvider } from "./context/LanguageContext";
 import Background from "./components/layout/Background";
@@ -8,9 +8,10 @@ import Navbar from "./components/layout/Navbar";
 import LanguageTransitionOverlay from "./components/layout/LanguageTransitionOverlay";
 import Hero from "./components/Hero/Hero";
 
-// Services/Resume/Projects/Contact are wired in one at a time in Phase 3,
-// each as a React.lazy() import (unchanged from the CRA lazy-loading
-// pattern) once migrated — nothing to import here yet.
+const Services = lazy(() => import("./components/Services/Services"));
+const Resume = lazy(() => import("./components/Resume/Resume"));
+const Projects = lazy(() => import("./components/Projects/Projects"));
+const Contact = lazy(() => import("./components/Contact/Contact"));
 
 export default function PortfolioApp({ initialLang }) {
   const [page, setPage] = useState("hero");
@@ -33,10 +34,10 @@ export default function PortfolioApp({ initialLang }) {
 
         {page === "hero" && <Hero goTo={goTo} />}
         <Suspense fallback={null}>
-          {/* page === "servicios" && <Services /> — Phase 3a */}
-          {/* page === "curriculum" && <Resume /> — Phase 3b */}
-          {/* page === "proyectos" && <Projects /> — Phase 3c */}
-          {/* page === "contacto" && <Contact /> — Phase 3d */}
+          {page === "servicios" && <Services />}
+          {page === "curriculum" && <Resume />}
+          {page === "proyectos" && <Projects />}
+          {page === "contacto" && <Contact />}
         </Suspense>
 
         <LanguageTransitionOverlay />
