@@ -70,6 +70,7 @@ export default function Hero({ goTo }) {
               fill
               sizes={HERO_PHOTO_SIZES}
               priority
+              placeholder="blur"
               style={{ objectFit: "cover", objectPosition: "center top" }}
             />
             <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 1px ${COLORS.accent}25` }} />

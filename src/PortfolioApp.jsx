@@ -13,7 +13,7 @@ const Resume = lazy(() => import("./components/Resume/Resume"));
 const Projects = lazy(() => import("./components/Projects/Projects"));
 const Contact = lazy(() => import("./components/Contact/Contact"));
 
-export default function PortfolioApp({ initialLang }) {
+export default function PortfolioApp() {
   const [page, setPage] = useState("hero");
 
   const goTo = (id) => {
@@ -22,7 +22,7 @@ export default function PortfolioApp({ initialLang }) {
   };
 
   return (
-    <LanguageProvider initialLang={initialLang}>
+    <LanguageProvider>
       <div style={{
         background: `radial-gradient(950px 760px at 4% -6%, ${COLORS.accent}2a, transparent 60%), radial-gradient(1300px 640px at 78% 18%, ${COLORS.accentPale}1e, transparent 62%), ${COLORS.bg}`,
         minHeight: "100vh", color: COLORS.text, fontFamily: "var(--font-inter), sans-serif", overflowX: "hidden",
