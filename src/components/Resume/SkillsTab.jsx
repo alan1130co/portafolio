@@ -1,3 +1,5 @@
+"use client";
+
 import { COLORS } from "../../theme/colors";
 import { skillGroups } from "../../data/skills";
 import { useLanguage } from "../../context/LanguageContext";
@@ -8,7 +10,7 @@ export default function SkillsTab() {
 
   return (
     <div>
-      <h2 style={{ fontFamily: "'Sora', sans-serif", fontSize: "26px", fontWeight: 800, marginBottom: "10px" }}>{t.resume.skillsHeading}</h2>
+      <h2 style={{ fontFamily: "var(--font-sora), sans-serif", fontSize: "26px", fontWeight: 800, marginBottom: "10px" }}>{t.resume.skillsHeading}</h2>
       <p style={{ color: COLORS.textMuted, fontSize: "14px", lineHeight: "1.7", marginBottom: "36px", maxWidth: "460px" }}>
         {t.resume.skillsIntro}
       </p>
@@ -16,7 +18,7 @@ export default function SkillsTab() {
         <div key={group.label} style={{ marginBottom: "36px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
             <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "11px", color: COLORS.accentBright, letterSpacing: "2px", whiteSpace: "nowrap" }}>{group.label}</span>
+            <span style={{ fontFamily: "var(--font-jbmono), monospace", fontSize: "11px", color: COLORS.accentBright, letterSpacing: "2px", whiteSpace: "nowrap" }}>{group.label}</span>
             <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
           </div>
           <div className="icon-grid">
@@ -33,12 +35,12 @@ export default function SkillsTab() {
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
           <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "11px", color: COLORS.accentBright, letterSpacing: "2px", whiteSpace: "nowrap" }}>{t.resume.softSkillsLabel}</span>
+          <span style={{ fontFamily: "var(--font-jbmono), monospace", fontSize: "11px", color: COLORS.accentBright, letterSpacing: "2px", whiteSpace: "nowrap" }}>{t.resume.softSkillsLabel}</span>
           <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
           {t.resume.softSkills.map((s) => (
-            <span key={s} style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, color: COLORS.textMuted, padding: "9px 16px", borderRadius: "100px", fontSize: "13px", fontFamily: "'Inter', sans-serif" }}>{s}</span>
+            <span key={s} style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, color: COLORS.textMuted, padding: "9px 16px", borderRadius: "100px", fontSize: "13px", fontFamily: "var(--font-inter), sans-serif" }}>{s}</span>
           ))}
         </div>
       </div>

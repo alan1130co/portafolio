@@ -1,4 +1,6 @@
-import { lazy, Suspense, useState } from "react";
+"use client";
+
+import { Suspense, lazy, useState } from "react";
 import { COLORS } from "./theme/colors";
 import { LanguageProvider } from "./context/LanguageContext";
 import Background from "./components/layout/Background";
@@ -11,7 +13,7 @@ const Resume = lazy(() => import("./components/Resume/Resume"));
 const Projects = lazy(() => import("./components/Projects/Projects"));
 const Contact = lazy(() => import("./components/Contact/Contact"));
 
-export default function Portfolio() {
+export default function PortfolioApp() {
   const [page, setPage] = useState("hero");
 
   const goTo = (id) => {
@@ -23,7 +25,7 @@ export default function Portfolio() {
     <LanguageProvider>
       <div style={{
         background: `radial-gradient(950px 760px at 4% -6%, ${COLORS.accent}2a, transparent 60%), radial-gradient(1300px 640px at 78% 18%, ${COLORS.accentPale}1e, transparent 62%), ${COLORS.bg}`,
-        minHeight: "100vh", color: COLORS.text, fontFamily: "'Inter', sans-serif", overflowX: "hidden",
+        minHeight: "100vh", color: COLORS.text, fontFamily: "var(--font-inter), sans-serif", overflowX: "hidden",
         boxShadow: "inset 0 0 200px rgba(0,0,0,0.3)",
       }}>
         <Background />
