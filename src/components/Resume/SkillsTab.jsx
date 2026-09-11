@@ -39,8 +39,8 @@ export default function SkillsTab() {
           <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-          {t.resume.softSkills.map((s) => (
-            <span key={s} style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, color: COLORS.textMuted, padding: "9px 16px", borderRadius: "100px", fontSize: "13px", fontFamily: "var(--font-inter), sans-serif" }}>{s}</span>
+          {t.resume.softSkills.map((s, i) => (
+            <span key={i} style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, color: COLORS.textMuted, padding: "9px 16px", borderRadius: "100px", fontSize: "13px", fontFamily: "var(--font-inter), sans-serif" }}>{s}</span>
           ))}
         </div>
       </div>

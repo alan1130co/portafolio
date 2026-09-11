@@ -24,8 +24,8 @@ export default function ServiceCard({ service }) {
       <p style={{ color: COLORS.textMuted, fontSize: "13.5px", lineHeight: "1.65", marginBottom: "18px" }}>{service.description}</p>
       {service.tags && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "20px" }}>
-          {service.tags.map((tag) => (
-            <span key={tag} style={{ background: COLORS.bgPanelAlt, border: `1px solid ${COLORS.border}`, borderRadius: "6px", padding: "5px 10px", fontSize: "12px", fontFamily: "var(--font-jbmono), monospace", color: COLORS.textMuted }}>{tag}</span>
+          {service.tags.map((tag, i) => (
+            <span key={i} style={{ background: COLORS.bgPanelAlt, border: `1px solid ${COLORS.border}`, borderRadius: "6px", padding: "5px 10px", fontSize: "12px", fontFamily: "var(--font-jbmono), monospace", color: COLORS.textMuted }}>{tag}</span>
           ))}
         </div>
       )}

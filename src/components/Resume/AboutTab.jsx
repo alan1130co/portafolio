@@ -20,8 +20,8 @@ export default function AboutTab() {
         {t.resume.aboutText}
       </p>
       <div className="fields-grid">
-        {t.resume.profileFields.map(([label, value]) => (
-          <div key={label} style={{ borderLeft: `2px solid ${COLORS.accent}50`, paddingLeft: "14px" }}>
+        {t.resume.profileFields.map(([label, value], i) => (
+          <div key={i} style={{ borderLeft: `2px solid ${COLORS.accent}50`, paddingLeft: "14px" }}>
             <p style={{ color: COLORS.accentBright, fontSize: "10.5px", fontFamily: "var(--font-jbmono), monospace", marginBottom: "6px", letterSpacing: "0.5px" }}>{label}</p>
             <p style={{ color: COLORS.text, fontSize: "14.5px", fontWeight: 500 }}>{value}</p>
           </div>
