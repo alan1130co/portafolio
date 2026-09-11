@@ -7,6 +7,7 @@ import Background from "./components/layout/Background";
 import Navbar from "./components/layout/Navbar";
 import LanguageTransitionOverlay from "./components/layout/LanguageTransitionOverlay";
 import Hero from "./components/Hero/Hero";
+import PageLoader from "./components/common/PageLoader";
 
 const Services = lazy(() => import("./components/Services/Services"));
 const Resume = lazy(() => import("./components/Resume/Resume"));
@@ -33,7 +34,7 @@ export default function PortfolioApp() {
         <Navbar page={page} goTo={goTo} />
 
         {page === "hero" && <Hero goTo={goTo} />}
-        <Suspense fallback={null}>
+        <Suspense fallback={<PageLoader />}>
           {page === "servicios" && <Services />}
           {page === "curriculum" && <Resume />}
           {page === "proyectos" && <Projects />}
