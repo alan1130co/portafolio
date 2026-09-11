@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 // mount together (the Hero stats row), their requestAnimationFrame loops
 // don't all compete for the main thread in the same frames right as the
 // page becomes interactive.
-export default function CountUp({ value, suffix, duration = 1300, delay = 0 }) {
+export default function CountUp({ value, suffix, duration = 650, delay = 0 }) {
   const [display, setDisplay] = useState(0);
   useEffect(() => {
     let rafId;

@@ -32,7 +32,7 @@ export default function Hero({ goTo }) {
   const { t } = useLanguage();
 
   return (
-    <section className="page" style={{ display: "flex", flexDirection: "column", justifyContent: "center", position: "relative", zIndex: 1 }}>
+    <section className="page page--fill" style={{ display: "flex", flexDirection: "column", justifyContent: "center", position: "relative", zIndex: 1 }}>
       <div className="hero-grid">
         <div>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "100px", padding: "7px 16px", marginBottom: "26px" }}>
@@ -86,7 +86,7 @@ export default function Hero({ goTo }) {
           return (
             <div key={i} className={CARD_SURFACE_CLASS} style={{ borderRadius: "14px", padding: "22px 16px", background: "linear-gradient(160deg, #182030, #141b26)" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: "2px", fontFamily: "var(--font-sora), sans-serif", fontSize: "30px", fontWeight: 800, color: COLORS.text, marginBottom: "6px" }}>
-                <CountUp value={s.value} suffix="" delay={i * 80} />
+                <CountUp value={s.value} suffix="" delay={i * 40} />
                 <span style={isAccentSuffix ? { color: COLORS.accentElectric, textShadow: `0 0 10px ${COLORS.accentElectric}, 0 0 22px ${COLORS.accentElectric}aa, 0 0 40px ${COLORS.accent}80` } : { color: COLORS.accentBright }}>{s.suffix}</span>
               </div>
               <div style={{ color: COLORS.textFaint, fontSize: "10.5px", fontFamily: "var(--font-jbmono), monospace", letterSpacing: "0.5px" }}>{s.label}</div>
