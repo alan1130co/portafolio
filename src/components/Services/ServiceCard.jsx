@@ -15,7 +15,7 @@ export default function ServiceCard({ service }) {
       style={{ position: "relative", borderRadius: "16px", padding: "30px 32px" }}>
       <span style={{ position: "absolute", bottom: "12px", right: "12px", width: "16px", height: "16px", borderBottom: `2px solid ${COLORS.accentBright}`, borderRight: `2px solid ${COLORS.accentBright}`, borderBottomRightRadius: "4px", opacity: hovered ? 1 : 0, transition: "opacity 0.25s ease" }} />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "18px" }}>
-        <span style={{ fontFamily: "var(--font-sora), sans-serif", fontSize: "28px", fontWeight: 800, color: COLORS.borderStrong }}>{service.num}</span>
+        <span aria-hidden="true" style={{ fontFamily: "var(--font-sora), sans-serif", fontSize: "28px", fontWeight: 800, color: COLORS.borderStrong }}>{service.num}</span>
         <span style={{ display: "flex", alignItems: "center", gap: "6px", background: `${COLORS.status}12`, border: `1px solid ${COLORS.status}35`, borderRadius: "100px", padding: "4px 10px" }}>
           <StatusDot /><span style={{ fontFamily: "var(--font-jbmono), monospace", fontSize: "9.5px", color: COLORS.status, letterSpacing: "0.5px" }}>{t.services.online}</span>
         </span>

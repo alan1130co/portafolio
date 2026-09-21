@@ -13,7 +13,7 @@ export default function TimelineEntry({ entry, isLast }) {
           <span style={{ display: "inline-block", fontFamily: "var(--font-jbmono), monospace", fontSize: "11px", color: COLORS.accentBright, border: `1px solid ${COLORS.accent}40`, borderRadius: "6px", padding: "4px 10px", marginBottom: "14px" }}>
             [ TIMESTAMP: {entry.timestamp} ]
           </span>
-          <h4 style={{ margin: "0 0 6px", color: COLORS.text, fontSize: "19px", fontFamily: "var(--font-sora), sans-serif", fontWeight: 700 }}>{entry.title}</h4>
+          <h3 style={{ margin: "0 0 6px", color: COLORS.text, fontSize: "19px", fontFamily: "var(--font-sora), sans-serif", fontWeight: 700 }}>{entry.title}</h3>
           <p style={{ margin: "0 0 14px", color: COLORS.accentBright, fontSize: "13px", fontFamily: "var(--font-inter), sans-serif" }}>• {entry.org}</p>
           <p style={{ color: COLORS.textMuted, fontSize: "13.5px", lineHeight: "1.7" }}>
             <span style={{ color: COLORS.accentBright }}>&gt; </span>{entry.detail}

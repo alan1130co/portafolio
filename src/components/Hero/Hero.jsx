@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useSyncExternalStore } from "react";
 import Image from "next/image";
 import { COLORS } from "../../theme/colors";
 import { CARD_SURFACE_CLASS } from "../../theme/cardStyle";
@@ -27,9 +27,32 @@ const nameGradientStyle = {
   textShadow: `0 0 40px ${COLORS.accent}66`,
 };
 
+const DESKTOP_MOTION_QUERY = "(min-width: 768px) and (prefers-reduced-motion: no-preference)";
+
+function subscribeDesktopMotion(callback) {
+  const mq = window.matchMedia(DESKTOP_MOTION_QUERY);
+  mq.addEventListener("change", callback);
+  return () => mq.removeEventListener("change", callback);
+}
+function getDesktopMotionSnapshot() {
+  return window.matchMedia(DESKTOP_MOTION_QUERY).matches;
+}
+// Server (and first client paint, before hydration) never has motion
+// enabled — the static text/final values are what SSR renders, so this
+// keeps that render in sync and avoids a hydration mismatch.
+function getServerSnapshot() {
+  return false;
+}
+
 export default function Hero({ goTo }) {
-  const [titleDone, setTitleDone] = useState(false);
   const { t } = useLanguage();
+  // False on the server and on first paint (static text everywhere, no
+  // typing timers). On desktop with motion allowed, flips true post-
+  // hydration and layers the CSS-only typing reveal + count-up on top of
+  // the already-visible content.
+  const effectsOn = useSyncExternalStore(subscribeDesktopMotion, getDesktopMotionSnapshot, getServerSnapshot);
+
+  const titleDurationSec = effectsOn ? ("Alan Coneo".length * 48) / 1000 : 0;
 
   return (
     <section className="page page--fill" style={{ display: "flex", flexDirection: "column", justifyContent: "center", position: "relative", zIndex: 1 }}>
@@ -41,21 +64,20 @@ export default function Hero({ goTo }) {
           </div>
           <h1 style={{ fontFamily: "var(--font-sora), sans-serif", fontSize: "clamp(38px, 5.6vw, 60px)", fontWeight: 800, lineHeight: 1.06, marginBottom: "20px", color: COLORS.text }}>
             {t.hero.greeting}<br />
-            <span style={nameGradientStyle}><TerminalText text="Alan Coneo" speed={48} onDone={() => setTitleDone(true)} /></span>
+            <span style={nameGradientStyle}><TerminalText text="Alan Coneo" speed={48} animated={effectsOn} /></span>
           </h1>
           <div
-            style={titleDone ? { animation: "fadeUp 0.5s ease both" } : { opacity: 0, pointerEvents: "none" }}
-            aria-hidden={!titleDone}
+            style={effectsOn ? { animation: `fadeUp 0.5s ease ${titleDurationSec}s both` } : undefined}
           >
             <p style={{ color: COLORS.textMuted, fontSize: "16px", lineHeight: "1.85", maxWidth: "540px", marginBottom: "32px" }}>
               {t.hero.intro}
             </p>
             <div className="cv-row" style={{ marginBottom: "26px" }}>
-              <button onClick={() => goTo("curriculum")} className="cv-button" tabIndex={titleDone ? 0 : -1} style={{ display: "inline-flex", alignItems: "center", gap: "10px", borderRadius: "10px", padding: "13px 22px", fontFamily: "var(--font-jbmono), monospace", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+              <button onClick={() => goTo("curriculum")} className="cv-button" style={{ display: "inline-flex", alignItems: "center", gap: "10px", borderRadius: "10px", padding: "13px 22px", fontFamily: "var(--font-jbmono), monospace", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
                 &gt;_ {t.hero.cvButton}
               </button>
               {socialRow.map((s) => (
-                <a key={s.title} href={s.href} target="_blank" rel="noreferrer" title={s.title} className="social-icon" tabIndex={titleDone ? 0 : -1} style={{ width: "44px", height: "44px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px", textDecoration: "none" }}>
+                <a key={s.title} href={s.href} target="_blank" rel="noreferrer" title={s.title} aria-label={s.title} className="social-icon" style={{ width: "44px", height: "44px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "10px", textDecoration: "none" }}>
                   <SocialIcon name={s.icon} />
                 </a>
               ))}
@@ -70,6 +92,7 @@ export default function Hero({ goTo }) {
               fill
               sizes={HERO_PHOTO_SIZES}
               priority
+              fetchPriority="high"
               placeholder="blur"
               style={{ objectFit: "cover", objectPosition: "center top" }}
             />
@@ -86,7 +109,7 @@ export default function Hero({ goTo }) {
           return (
             <div key={i} className={CARD_SURFACE_CLASS} style={{ borderRadius: "14px", padding: "22px 16px", background: "linear-gradient(160deg, #182030, #141b26)" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: "2px", fontFamily: "var(--font-sora), sans-serif", fontSize: "30px", fontWeight: 800, color: COLORS.text, marginBottom: "6px" }}>
-                <CountUp value={s.value} suffix="" delay={i * 40} />
+                <CountUp value={s.value} suffix="" delay={i * 40} animated={effectsOn} />
                 <span style={isAccentSuffix ? { color: COLORS.accentElectric, textShadow: `0 0 10px ${COLORS.accentElectric}, 0 0 22px ${COLORS.accentElectric}aa, 0 0 40px ${COLORS.accent}80` } : { color: COLORS.accentBright }}>{s.suffix}</span>
               </div>
               <div style={{ color: COLORS.textFaint, fontSize: "10.5px", fontFamily: "var(--font-jbmono), monospace", letterSpacing: "0.5px" }}>{s.label}</div>

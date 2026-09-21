@@ -16,6 +16,30 @@ body {
 
 @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0 } }
 @keyframes fadeUp { from { opacity:0; transform:translateY(18px) } to { opacity:1; transform:translateY(0) } }
+
+/* Desktop-only progressive enhancement for the hero name (see TerminalText).
+   clip-path never changes layout geometry, so this never triggers a
+   reflow or a CLS entry — only a repaint of the clipped element. steps()
+   quantizes the reveal to one jump per character, matching the old
+   per-character JS effect it replaces, without any JS timers. */
+@keyframes typeReveal { from { clip-path: inset(0 100% 0 0) } to { clip-path: inset(0 0 0 0) } }
+@keyframes cursorHide { to { opacity: 0 } }
+.type-effect {
+  display: inline-block;
+  animation: typeReveal var(--type-duration, 0.5s) steps(var(--char-count, 10)) both;
+}
+.type-effect::after {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 0.85em;
+  background: #5c9bff;
+  margin-left: 2px;
+  vertical-align: middle;
+  animation:
+    blink 1s step-end infinite,
+    cursorHide 0.01s linear var(--type-duration, 0.5s) forwards;
+}
 /* transform+opacity only (both GPU-composited) instead of animating
    box-shadow, which Lighthouse flags as a non-composited property that
    forces a main-thread repaint every frame for as long as it's mounted. */
@@ -25,8 +49,17 @@ body {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
 
-.page { padding: 132px 24px 70px; max-width: 1080px; margin: 0 auto; animation: fadeUp 0.4s ease both; }
+.page { padding: 132px 24px 70px; max-width: 1080px; margin: 0 auto; }
 .page--fill { min-height: 100vh; min-height: 100dvh; }
+
+/* The page-entrance fade starts at opacity:0, and the LCP spec excludes
+   fully-transparent elements from candidacy until they become visible —
+   so on mobile this was pushing the LCP report ~400ms past first paint
+   for no visual payoff (nothing above the fold to "reveal" a fade for
+   on a phone). Desktop-only, and only when motion is welcome. */
+@media (min-width: 768px) {
+  .page { animation: fadeUp 0.4s ease both; }
+}
 .grid-bg {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background-image: linear-gradient(#1d263235 1px, transparent 1px), linear-gradient(90deg, #1d263235 1px, transparent 1px);

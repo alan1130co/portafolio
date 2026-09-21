@@ -50,7 +50,7 @@ export function LanguageProvider({ children }) {
       setTargetLang(detected);
       setLangState(detected);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    document.documentElement.lang = detected;
   }, []);
 
   const schedule = (fn, ms) => {
@@ -63,6 +63,12 @@ export function LanguageProvider({ children }) {
     setPhase(next);
   };
 
+  // react-hooks/immutability flags a direct recursive reference to
+  // `startCycle` from inside its own body (TDZ at declaration time, even
+  // though the call only runs later via setTimeout, once the const is
+  // long since assigned). Route the recursive call through a ref instead.
+  const startCycleRef = useRef(() => {});
+
   const startCycle = useCallback(() => {
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
@@ -70,6 +76,7 @@ export function LanguageProvider({ children }) {
     updatePhase("in");
     schedule(() => {
       setLangState(targetLangRef.current);
+      document.documentElement.lang = targetLangRef.current;
       updatePhase("hold");
       schedule(() => {
         updatePhase("out");
@@ -77,13 +84,18 @@ export function LanguageProvider({ children }) {
           updatePhase("idle");
           if (pendingRestartRef.current) {
             pendingRestartRef.current = false;
-            startCycle();
+            startCycleRef.current();
           }
         }, SWEEP_OUT_MS);
       }, HOLD_MS);
     }, SWEEP_IN_MS);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // Refs may not be written during render (react-hooks/refs) — commit the
+  // latest identity right after render instead. startCycle's deps are `[]`
+  // so this only ever runs once in practice.
+  useLayoutEffect(() => {
+    startCycleRef.current = startCycle;
+  });
 
   const setLang = useCallback((nextLang) => {
     if (nextLang === targetLangRef.current) return;

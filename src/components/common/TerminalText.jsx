@@ -1,21 +1,21 @@
-"use client";
+// The full string is always the rendered text — no JS ever generates it,
+// so it's present in the initial HTML for LCP/SEO/accessibility on every
+// device. `animated` is an opt-in visual layer on top: a pure-CSS
+// steps()-timed clip-path reveal (no timers, no per-character re-renders,
+// no forced reflow), gated by the caller to desktop + no-reduced-motion.
+export default function TerminalText({ text, speed = 48, animated = false }) {
+  if (!animated) return <span>{text}</span>;
 
-import { useState, useEffect } from "react";
-import { COLORS } from "../../theme/colors";
-
-export default function TerminalText({ text, speed = 42, onDone }) {
-  const [displayed, setDisplayed] = useState("");
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    if (idx < text.length) {
-      const t = setTimeout(() => { setDisplayed((p) => p + text[idx]); setIdx((i) => i + 1); }, speed);
-      return () => clearTimeout(t);
-    } else if (onDone) onDone();
-  }, [idx, text, speed, onDone]);
+  const durationMs = text.length * speed;
   return (
-    <span>
-      {displayed}
-      {idx < text.length && <span style={{ display: "inline-block", width: "3px", height: "0.85em", background: COLORS.accentBright, marginLeft: "2px", verticalAlign: "middle", animation: "blink 1s step-end infinite" }} />}
+    <span
+      className="type-effect"
+      style={{
+        "--type-duration": `${durationMs}ms`,
+        "--char-count": text.length,
+      }}
+    >
+      {text}
     </span>
   );
 }
