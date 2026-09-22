@@ -8,6 +8,16 @@ import localFont from "next/font/local";
 //   Sora:          used at 700/800  -> file instanced to wght 700-800
 //   Inter:         used at 400/500/600 -> file instanced to wght 400-600
 //   JetBrains Mono: used at 400/600/700 -> file instanced to wght 400-700
+//
+// All three are still variable (fvar/gvar intact) rather than static
+// per-weight files: with 2-3 weights needed per family, one variable file
+// shared across every weight (one HTTP request, shared glyph outlines) is
+// smaller in total than separate static instances per weight (each with
+// its own full glyph table) — measured trade-off, not an assumption.
+// They're also subset to the Unicode ranges the app actually renders
+// (scripts/subset-fonts.sh) — glyph tables only, wght axis and OS/2/hhea
+// metrics (ascender/descender/unitsPerEm, which next/font's automatic
+// fallback size-adjust is computed from) are untouched.
 
 export const sora = localFont({
   src: [
