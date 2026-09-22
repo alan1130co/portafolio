@@ -4,11 +4,13 @@ import { useState } from "react";
 import { COLORS } from "../../theme/colors";
 import { CARD_SURFACE_CLASS } from "../../theme/cardStyle";
 import { useLanguage } from "../../context/LanguageContext";
+import { translationsServices } from "../../data/translations.services";
 import StatusDot from "../common/StatusDot";
 
 export default function ServiceCard({ service }) {
   const [hovered, setHovered] = useState(false);
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const t = translationsServices[lang];
   return (
     <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
       className={CARD_SURFACE_CLASS}
@@ -17,7 +19,7 @@ export default function ServiceCard({ service }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "18px" }}>
         <span aria-hidden="true" style={{ fontFamily: "var(--font-sora), sans-serif", fontSize: "28px", fontWeight: 800, color: COLORS.borderStrong }}>{service.num}</span>
         <span style={{ display: "flex", alignItems: "center", gap: "6px", background: `${COLORS.status}12`, border: `1px solid ${COLORS.status}35`, borderRadius: "100px", padding: "4px 10px" }}>
-          <StatusDot /><span style={{ fontFamily: "var(--font-jbmono), monospace", fontSize: "9.5px", color: COLORS.status, letterSpacing: "0.5px" }}>{t.services.online}</span>
+          <StatusDot /><span style={{ fontFamily: "var(--font-jbmono), monospace", fontSize: "9.5px", color: COLORS.status, letterSpacing: "0.5px" }}>{t.online}</span>
         </span>
       </div>
       <h3 style={{ margin: "0 0 10px", color: hovered ? COLORS.accentBright : COLORS.text, fontSize: "19px", fontFamily: "var(--font-sora), sans-serif", fontWeight: 700, transition: "color 0.2s ease" }}>{service.title}</h3>
@@ -31,7 +33,7 @@ export default function ServiceCard({ service }) {
       )}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: `1px dashed ${COLORS.border}`, paddingTop: "16px" }}>
         <span style={{ color: hovered ? COLORS.accentBright : COLORS.textFaint, fontSize: "11px", letterSpacing: "2px", transition: "color 0.2s ease" }}>· · ·</span>
-        <span style={{ fontFamily: "var(--font-jbmono), monospace", fontSize: "11.5px", fontWeight: 600, color: hovered ? COLORS.accentBright : COLORS.textFaint, transition: "color 0.2s ease" }}>{hovered ? `> ${t.services.execute}` : t.services.execute}</span>
+        <span style={{ fontFamily: "var(--font-jbmono), monospace", fontSize: "11.5px", fontWeight: 600, color: hovered ? COLORS.accentBright : COLORS.textFaint, transition: "color 0.2s ease" }}>{hovered ? `> ${t.execute}` : t.execute}</span>
       </div>
     </div>
   );

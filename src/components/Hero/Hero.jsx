@@ -1,16 +1,24 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { lazy, Suspense } from "react";
 import Image from "next/image";
 import { COLORS } from "../../theme/colors";
 import { CARD_SURFACE_CLASS } from "../../theme/cardStyle";
 import { useLanguage } from "../../context/LanguageContext";
+import useDesktopMotion from "../../hooks/useDesktopMotion";
 import StatusDot from "../common/StatusDot";
-import TerminalText from "../common/TerminalText";
-import CountUp from "../common/CountUp";
 import SocialIcon from "../common/SocialIcon";
 import { socialRow } from "../../data/contact";
 import heroPhoto from "../../assets/img/hero-photo.jpg";
+
+// Typing/count-up are a desktop-only enhancement layer (see useDesktopMotion).
+// lazy() only triggers the import() when the component is actually
+// mounted — so as long as callers only mount these behind an `effectsOn`
+// check (never on mobile), the chunk is never requested there. Each call
+// site wraps its own Suspense with a fallback that matches the static
+// value exactly, so there's no visual flash on desktop while it streams in.
+const TerminalText = lazy(() => import("../common/TerminalText"));
+const CountUp = lazy(() => import("../common/CountUp"));
 
 // The photo box is fixed at 320px (capped at 78vw on narrow viewports) at
 // every breakpoint. next/image generates the responsive webp/avif variants
@@ -27,30 +35,13 @@ const nameGradientStyle = {
   textShadow: `0 0 40px ${COLORS.accent}66`,
 };
 
-const DESKTOP_MOTION_QUERY = "(min-width: 768px) and (prefers-reduced-motion: no-preference)";
-
-function subscribeDesktopMotion(callback) {
-  const mq = window.matchMedia(DESKTOP_MOTION_QUERY);
-  mq.addEventListener("change", callback);
-  return () => mq.removeEventListener("change", callback);
-}
-function getDesktopMotionSnapshot() {
-  return window.matchMedia(DESKTOP_MOTION_QUERY).matches;
-}
-// Server (and first client paint, before hydration) never has motion
-// enabled — the static text/final values are what SSR renders, so this
-// keeps that render in sync and avoids a hydration mismatch.
-function getServerSnapshot() {
-  return false;
-}
-
 export default function Hero({ goTo }) {
   const { t } = useLanguage();
   // False on the server and on first paint (static text everywhere, no
-  // typing timers). On desktop with motion allowed, flips true post-
-  // hydration and layers the CSS-only typing reveal + count-up on top of
-  // the already-visible content.
-  const effectsOn = useSyncExternalStore(subscribeDesktopMotion, getDesktopMotionSnapshot, getServerSnapshot);
+  // typing timers, no lazy chunk requested). On desktop with motion
+  // allowed, flips true post-hydration and layers the CSS-only typing
+  // reveal + count-up on top of the already-visible content.
+  const effectsOn = useDesktopMotion();
 
   const titleDurationSec = effectsOn ? ("Alan Coneo".length * 48) / 1000 : 0;
 
@@ -64,7 +55,15 @@ export default function Hero({ goTo }) {
           </div>
           <h1 style={{ fontFamily: "var(--font-sora), sans-serif", fontSize: "clamp(38px, 5.6vw, 60px)", fontWeight: 800, lineHeight: 1.06, marginBottom: "20px", color: COLORS.text }}>
             {t.hero.greeting}<br />
-            <span style={nameGradientStyle}><TerminalText text="Alan Coneo" speed={48} animated={effectsOn} /></span>
+            <span style={nameGradientStyle}>
+              {effectsOn ? (
+                <Suspense fallback={<span>Alan Coneo</span>}>
+                  <TerminalText text="Alan Coneo" speed={48} animated />
+                </Suspense>
+              ) : (
+                <span>Alan Coneo</span>
+              )}
+            </span>
           </h1>
           <div
             style={effectsOn ? { animation: `fadeUp 0.5s ease ${titleDurationSec}s both` } : undefined}
@@ -109,7 +108,13 @@ export default function Hero({ goTo }) {
           return (
             <div key={i} className={CARD_SURFACE_CLASS} style={{ borderRadius: "14px", padding: "22px 16px", background: "linear-gradient(160deg, #182030, #141b26)" }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: "2px", fontFamily: "var(--font-sora), sans-serif", fontSize: "30px", fontWeight: 800, color: COLORS.text, marginBottom: "6px" }}>
-                <CountUp value={s.value} suffix="" delay={i * 40} animated={effectsOn} />
+                {effectsOn ? (
+                  <Suspense fallback={s.value}>
+                    <CountUp value={s.value} suffix="" delay={i * 40} animated />
+                  </Suspense>
+                ) : (
+                  s.value
+                )}
                 <span style={isAccentSuffix ? { color: COLORS.accentElectric, textShadow: `0 0 10px ${COLORS.accentElectric}, 0 0 22px ${COLORS.accentElectric}aa, 0 0 40px ${COLORS.accent}80` } : { color: COLORS.accentBright }}>{s.suffix}</span>
               </div>
               <div style={{ color: COLORS.textFaint, fontSize: "10.5px", fontFamily: "var(--font-jbmono), monospace", letterSpacing: "0.5px" }}>{s.label}</div>

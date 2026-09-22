@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { translations } from "../data/translations";
+import useDesktopMotion from "../hooks/useDesktopMotion";
 
 const SWEEP_IN_MS = 240;
 const HOLD_MS = 420;
@@ -29,6 +30,10 @@ function detectClientLang() {
 }
 
 export function LanguageProvider({ children }) {
+  // Desktop-only: the sweep overlay is a decorative transition. On mobile
+  // (or with reduced motion) the language just swaps instantly below —
+  // no phase cycle, no overlay chunk ever fetched (see PortfolioApp).
+  const sweepAllowed = useDesktopMotion();
   const [lang, setLangState] = useState(DEFAULT_LANG);
   const [phase, setPhase] = useState("idle"); // "idle" | "in" | "hold" | "out"
   const [targetLang, setTargetLang] = useState(DEFAULT_LANG);
@@ -107,6 +112,17 @@ export function LanguageProvider({ children }) {
       // localStorage unavailable — preference just won't persist across visits.
     }
 
+    if (!sweepAllowed) {
+      // Mobile / reduced-motion: swap immediately, no phase cycle — keeps
+      // the overlay component (and its timers) fully unused so it's never
+      // mounted and its chunk never fetched.
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
+      setLangState(nextLang);
+      document.documentElement.lang = nextLang;
+      return;
+    }
+
     if (phaseRef.current === "idle") {
       startCycle();
     } else if (phaseRef.current === "out") {
@@ -116,7 +132,7 @@ export function LanguageProvider({ children }) {
     // If phase is "in" or "hold", the running cycle already reads
     // targetLangRef.current when it applies the swap — no restart needed,
     // which avoids any visual snap from interrupting an in-flight sweep.
-  }, [startCycle]);
+  }, [startCycle, sweepAllowed]);
 
   const contentValue = useMemo(() => ({
     lang, setLang, t: translations[lang],

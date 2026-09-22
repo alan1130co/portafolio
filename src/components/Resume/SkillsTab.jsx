@@ -3,16 +3,18 @@
 import { COLORS } from "../../theme/colors";
 import { skillGroups } from "../../data/skills";
 import { useLanguage } from "../../context/LanguageContext";
+import { translationsResume } from "../../data/translations.resume";
 import SkillIcon from "../common/SkillIcon";
 
 export default function SkillsTab() {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const t = translationsResume[lang];
 
   return (
     <div>
-      <h2 style={{ fontFamily: "var(--font-sora), sans-serif", fontSize: "26px", fontWeight: 800, marginBottom: "10px" }}>{t.resume.skillsHeading}</h2>
+      <h2 style={{ fontFamily: "var(--font-sora), sans-serif", fontSize: "26px", fontWeight: 800, marginBottom: "10px" }}>{t.skillsHeading}</h2>
       <p style={{ color: COLORS.textMuted, fontSize: "14px", lineHeight: "1.7", marginBottom: "36px", maxWidth: "460px" }}>
-        {t.resume.skillsIntro}
+        {t.skillsIntro}
       </p>
       {skillGroups.map((group) => (
         <div key={group.label} style={{ marginBottom: "36px" }}>
@@ -35,11 +37,11 @@ export default function SkillsTab() {
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
           <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
-          <span style={{ fontFamily: "var(--font-jbmono), monospace", fontSize: "11px", color: COLORS.accentBright, letterSpacing: "2px", whiteSpace: "nowrap" }}>{t.resume.softSkillsLabel}</span>
+          <span style={{ fontFamily: "var(--font-jbmono), monospace", fontSize: "11px", color: COLORS.accentBright, letterSpacing: "2px", whiteSpace: "nowrap" }}>{t.softSkillsLabel}</span>
           <span style={{ flex: 1, height: "1px", background: COLORS.border }} />
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-          {t.resume.softSkills.map((s, i) => (
+          {t.softSkills.map((s, i) => (
             <span key={i} style={{ background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, color: COLORS.textMuted, padding: "9px 16px", borderRadius: "100px", fontSize: "13px", fontFamily: "var(--font-inter), sans-serif" }}>{s}</span>
           ))}
         </div>

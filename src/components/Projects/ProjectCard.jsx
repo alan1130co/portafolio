@@ -3,9 +3,11 @@
 import { COLORS } from "../../theme/colors";
 import { CARD_SURFACE_CLASS } from "../../theme/cardStyle";
 import { useLanguage } from "../../context/LanguageContext";
+import { translationsProjects } from "../../data/translations.projects";
 
 export default function ProjectCard({ p, copy }) {
-  const { t } = useLanguage();
+  const { lang } = useLanguage();
+  const t = translationsProjects[lang];
 
   return (
     <div className={CARD_SURFACE_CLASS} style={{ borderRadius: "18px" }}>
@@ -28,10 +30,10 @@ export default function ProjectCard({ p, copy }) {
         </div>
         <div style={{ display: "flex", borderTop: `1px solid ${COLORS.border}`, background: COLORS.bgPanelAlt, borderBottomLeftRadius: "18px", borderBottomRightRadius: "18px" }}>
           <a href={p.website} target="_blank" rel="noreferrer" style={{ flex: 1, padding: "14px", textAlign: "center", color: COLORS.accentBright, fontFamily: "var(--font-jbmono), monospace", fontSize: "12px", fontWeight: 600, textDecoration: "none", borderRight: `1px solid ${COLORS.border}` }}>
-            {t.projects.viewWebsite}
+            {t.viewWebsite}
           </a>
           <a href={p.github} target="_blank" rel="noreferrer" style={{ flex: 1, padding: "14px", textAlign: "center", color: COLORS.textMuted, fontFamily: "var(--font-jbmono), monospace", fontSize: "12px", fontWeight: 600, textDecoration: "none" }}>
-            {t.projects.viewGithub}
+            {t.viewGithub}
           </a>
         </div>
       </div>

@@ -208,6 +208,12 @@ body {
   .cv-sidebar { flex-direction: row !important; flex-wrap: wrap !important; }
   .services-grid { grid-template-columns: 1fr !important; }
   .fields-grid { grid-template-columns: 1fr !important; }
+  /* Desktop-only decoration: two `filter: blur(150px)` layers are real
+     paint/compositing cost on low-end GPUs for a purely cosmetic glow.
+     `display: none` (not visibility/opacity) drops them from the render
+     tree entirely — no paint, no composite layer — while the markup stays
+     identical between server and client, so there's no hydration diff. */
+  .glow-orb { display: none; }
 }
 
 /* Small phones (below sm, 640px): the 2-up stats row is still tight
