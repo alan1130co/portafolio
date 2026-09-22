@@ -29,13 +29,15 @@ export default function PortfolioApp() {
 
         <Navbar page={page} goTo={goTo} />
 
-        {page === "hero" && <Hero goTo={goTo} />}
-        <Suspense fallback={<PageLoader />}>
-          {page === "servicios" && <Services />}
-          {page === "curriculum" && <Resume />}
-          {page === "proyectos" && <Projects />}
-          {page === "contacto" && <Contact />}
-        </Suspense>
+        <main>
+          {page === "hero" && <Hero goTo={goTo} />}
+          <Suspense fallback={<PageLoader />}>
+            {page === "servicios" && <Services />}
+            {page === "curriculum" && <Resume />}
+            {page === "proyectos" && <Projects />}
+            {page === "contacto" && <Contact />}
+          </Suspense>
+        </main>
 
         <LanguageTransitionOverlay />
       </div>
