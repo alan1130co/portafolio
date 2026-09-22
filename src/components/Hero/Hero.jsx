@@ -1,7 +1,6 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import Image from "next/image";
 import { COLORS } from "../../theme/colors";
 import { CARD_SURFACE_CLASS } from "../../theme/cardStyle";
 import { useLanguage } from "../../context/LanguageContext";
@@ -10,13 +9,23 @@ import TerminalText from "../common/TerminalText";
 import CountUp from "../common/CountUp";
 import SocialIcon from "../common/SocialIcon";
 import { socialRow } from "../../data/contact";
-import heroPhoto from "../../assets/img/hero-photo.jpg";
 
 // The photo box is fixed at 320px (capped at 78vw on narrow viewports) at
-// every breakpoint. next/image generates the responsive webp/avif variants
-// from this single source on demand (via Vercel's image optimizer), so the
-// old manual mobile/desktop webp/jpg files are no longer needed.
+// every breakpoint, so the real widths this box ever requests (at up to 3x
+// DPR) top out around 960px. Pre-generated as static files in /public
+// (scripts/generate-hero-images.js) instead of going through next/image's
+// on-demand optimizer — that endpoint is a serverless function, and this
+// image is above-the-fold/LCP on every visit, so it can't afford that
+// extra request hop on a slow connection.
+const HERO_WIDTHS = [384, 480, 640, 750, 828, 960];
+const HERO_SRCSET_AVIF = HERO_WIDTHS.map((w) => `/hero/hero-${w}.avif ${w}w`).join(", ");
+const HERO_SRCSET_WEBP = HERO_WIDTHS.map((w) => `/hero/hero-${w}.webp ${w}w`).join(", ");
 const HERO_PHOTO_SIZES = "(max-width: 767px) 78vw, 320px";
+// Tiny blurred JPEG of the same photo, inlined as the box's CSS background
+// so it's visible the instant the stylesheet applies — no JS/placeholder
+// prop needed, since the <img> covers it completely once it decodes.
+const HERO_BLUR_DATA_URL =
+  "data:image/jpeg;base64,/9j/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAYABADASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAYBAgX/xAAeEAACAgIDAQEAAAAAAAAAAAABAwACBBEFITESE//EABYBAQEBAAAAAAAAAAAAAAAAAAACA//EABYRAQEBAAAAAAAAAAAAAAAAAAARAf/aAAwDAQACEQMRAD8AbMpxSv6EriPL6bMyczkxd/4jyGJyIU4KPhibS5C61pDjffcmjrFwvvuEJqh//9k=";
 
 const nameGradientStyle = {
   backgroundImage: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.accentBright} 55%, ${COLORS.accentPale})`,
@@ -85,17 +94,29 @@ export default function Hero({ goTo }) {
           </div>
         </div>
         <div style={{ position: "relative", justifySelf: "center" }}>
-          <div style={{ position: "relative", width: "320px", maxWidth: "78vw", aspectRatio: "1 / 1.12", borderRadius: "20px", overflow: "hidden", border: `1px solid ${COLORS.borderStrong}`, boxShadow: `0 0 0 1px ${COLORS.bg}, 0 30px 60px rgba(0,0,0,0.5)` }}>
-            <Image
-              src={heroPhoto}
-              alt="Alan Coneo"
-              fill
-              sizes={HERO_PHOTO_SIZES}
-              priority
-              fetchPriority="high"
-              placeholder="blur"
-              style={{ objectFit: "cover", objectPosition: "center top" }}
-            />
+          <div
+            style={{
+              position: "relative", width: "320px", maxWidth: "78vw", aspectRatio: "1 / 1.12", borderRadius: "20px", overflow: "hidden", border: `1px solid ${COLORS.borderStrong}`, boxShadow: `0 0 0 1px ${COLORS.bg}, 0 30px 60px rgba(0,0,0,0.5)`,
+              backgroundImage: `url(${HERO_BLUR_DATA_URL})`, backgroundSize: "cover", backgroundPosition: "center top",
+            }}
+          >
+            <link rel="preload" as="image" href="/hero/hero-960.avif" imageSrcSet={HERO_SRCSET_AVIF} imageSizes={HERO_PHOTO_SIZES} fetchPriority="high" />
+            <picture>
+              <source type="image/avif" srcSet={HERO_SRCSET_AVIF} sizes={HERO_PHOTO_SIZES} />
+              <source type="image/webp" srcSet={HERO_SRCSET_WEBP} sizes={HERO_PHOTO_SIZES} />
+              <img
+                src="/hero/hero-960.webp"
+                srcSet={HERO_SRCSET_WEBP}
+                sizes={HERO_PHOTO_SIZES}
+                alt="Alan Coneo"
+                width={960}
+                height={1440}
+                fetchPriority="high"
+                loading="eager"
+                decoding="async"
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+              />
+            </picture>
             <div style={{ position: "absolute", inset: 0, boxShadow: `inset 0 0 0 1px ${COLORS.accent}25` }} />
           </div>
           <div style={{ position: "absolute", bottom: "-16px", right: "-8px", background: COLORS.bgPanel, border: `1px solid ${COLORS.border}`, borderRadius: "100px", padding: "9px 18px", display: "flex", alignItems: "center", gap: "8px", whiteSpace: "nowrap", boxShadow: "0 10px 30px rgba(0,0,0,0.45)" }}>
