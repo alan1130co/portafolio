@@ -35,7 +35,7 @@ export const inter = localFont({
     { path: "./Inter-Variable.woff2", weight: "600", style: "normal" },
   ],
   variable: "--font-inter",
-  display: "swap",
+  display: "optional", // see comment in jetbrainsMono below
 });
 
 export const jetbrainsMono = localFont({
