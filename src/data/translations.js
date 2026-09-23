@@ -87,7 +87,7 @@ export const translations = {
       available: "Available for projects",
     },
     stats: [
-      { value: 1, suffix: "+ Year", label: "YEARS OF EXPERIENCE" },
+      { value: 1, suffix: "+ Year", label: "OF EXPERIENCE" },
       { value: 4, suffix: "+", label: "KEY SERVICES" },
       { value: 3, suffix: "+", label: "PROJECTS & CLIENTS" },
       { value: 2024, suffix: "+", label: "EDUCATION START" },
