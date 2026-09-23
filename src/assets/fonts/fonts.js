@@ -45,13 +45,14 @@ export const jetbrainsMono = localFont({
     { path: "./JetBrainsMono-Variable.woff2", weight: "700", style: "normal" },
   ],
   variable: "--font-jbmono",
-  // Was "optional" (see git history for the CLS 0.288 regression that fixed),
-  // reverted to "swap": Safari has a separate bug where "optional" leaves
-  // this font's text (hero badge, CV button, lang toggle) unpainted for
-  // several seconds — sometimes indefinitely until an unrelated repaint —
-  // on real iPhones, which "swap"'s unconditional fallback-then-real-font
-  // paint doesn't hit. Re-measure CLS after this change; if it reopens the
-  // original regression, try "fallback" (short block + short swap window)
-  // before reverting.
-  display: "swap",
+  // "swap" (used by the other two families) is wrong here specifically:
+  // the hero badge and CV button are set in this font, and its fallback's
+  // advance width is enough wider that both wrap onto an extra line while
+  // it's active -- fallback -> real-font swap then collapses that extra
+  // line and shoves the photo box below it up by ~70px (measured live,
+  // confirmed as the CLS 0.288 regression, layout-shifts audit named this
+  // exact font as the cause). "optional" means the browser commits to
+  // fallback-or-real within one short block window and never swaps after
+  // paint, so the collapse-after-paint this depends on can't happen.
+  display: "optional",
 });
