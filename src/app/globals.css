@@ -83,7 +83,14 @@ body {
 }
 
 .page { padding: 132px 24px 70px; max-width: 1080px; margin: 0 auto; }
-.page--fill { min-height: 100vh; min-height: 100dvh; }
+/* svh (not dvh) on purpose: this box uses justify-content:center to vertically
+   center its content, so its height directly squeezes/expands that content.
+   dvh tracks Safari's toolbar state live, and on initial load Safari briefly
+   reports a larger dvh before settling to the real (smaller) value a moment
+   later — the resulting shrink re-centers the content and pushes whatever's
+   last (the stats row) below the fold right after it was visible. svh is the
+   toolbar-expanded, smallest-possible viewport, so it doesn't move post-load. */
+.page--fill { min-height: 100vh; min-height: 100svh; }
 
 /* The page-entrance fade starts at opacity:0, and the LCP spec excludes
    fully-transparent elements from candidacy until they become visible —
