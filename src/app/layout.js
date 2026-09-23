@@ -1,4 +1,5 @@
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { sora, inter, jetbrainsMono } from "../assets/fonts/fonts";
 
 const SITE_URL = "https://www.alan-dev.site";
@@ -39,7 +40,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es" className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
