@@ -82,6 +82,73 @@ body {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
 
+/* Loading overlay: server-rendered so it paints on the very first frame,
+   no JS/hydration required to appear. `layout.js`'s inline script reveals
+   it once the Hero photo (or, failing that, window load) confirms the
+   above-the-fold content is ready, or unconditionally at a hard 4s cap —
+   whichever comes first. Semi-transparent by design (not opaque): the
+   gradient + blur let the page dimly show through instead of hard-hiding
+   it. Fixed positioning keeps it out of normal flow, and only
+   opacity/visibility/backdrop-filter animate (all compositor/paint-only,
+   no layout), so toggling classes can never cause CLS — collapsed under
+   prefers-reduced-motion by the rule above. */
+#loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: linear-gradient(160deg, rgba(10, 20, 32, 0.86), rgba(10, 20, 32, 0.68));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+#loading-overlay.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.loading-overlay__cursor {
+  font-family: var(--font-jbmono), monospace;
+  font-size: clamp(40px, 8vw, 64px);
+  font-weight: 700;
+  color: #5c9bff;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 24px #2f7cff66;
+}
+.loading-overlay__cursor span {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+}
+/* Both strings render at all times, stacked via grid-area, and only their
+   opacity crossfades — the script only ever toggles a class on the parent,
+   so it never touches text React rendered, which would otherwise risk a
+   hydration mismatch reverting the reveal. */
+.loading-overlay__text-stack {
+  display: inline-grid;
+}
+.loading-overlay__text {
+  grid-area: 1 / 1;
+  font-family: var(--font-jbmono), monospace;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: #9fd6ff;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+.loading-overlay__text--welcome {
+  opacity: 0;
+}
+#loading-overlay.is-revealing .loading-overlay__text--loading {
+  opacity: 0;
+}
+#loading-overlay.is-revealing .loading-overlay__text--welcome {
+  opacity: 1;
+}
+
 .page { padding: 132px 24px 70px; max-width: 1080px; margin: 0 auto; }
 /* svh (not dvh) on purpose: this box uses justify-content:center to vertically
    center its content, so its height directly squeezes/expands that content.
