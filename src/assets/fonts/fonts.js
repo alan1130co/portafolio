@@ -35,7 +35,7 @@ export const inter = localFont({
     { path: "./Inter-Variable.woff2", weight: "600", style: "normal" },
   ],
   variable: "--font-inter",
-  display: "optional", // see comment in jetbrainsMono below
+  display: "swap",
 });
 
 export const jetbrainsMono = localFont({
@@ -45,13 +45,22 @@ export const jetbrainsMono = localFont({
     { path: "./JetBrainsMono-Variable.woff2", weight: "700", style: "normal" },
   ],
   variable: "--font-jbmono",
-  // Was "optional" (see git history for the CLS 0.288 regression that fixed),
-  // reverted to "swap": Safari has a separate bug where "optional" leaves
-  // this font's text (hero badge, CV button, lang toggle) unpainted for
-  // several seconds — sometimes indefinitely until an unrelated repaint —
-  // on real iPhones, which "swap"'s unconditional fallback-then-real-font
-  // paint doesn't hit. Re-measure CLS after this change; if it reopens the
-  // original regression, try "fallback" (short block + short swap window)
-  // before reverting.
+  // Root-cause fix for the CLS-vs-Safari-invisible-text tradeoff (see git
+  // history): next/font's automatic fallback (adjustFontFallback, on by
+  // default) always sizes against Arial — a proportional font — even
+  // though this family is monospace. Its size-adjust matches JetBrains
+  // Mono's *average* string width, which is exact for typical prose but
+  // wrong for short strings with an atypical letter mix (hero badge, CV
+  // button, lang toggle), so swapping in the real font changed their
+  // width enough to collapse 2 lines into 1 and shove the photo up
+  // (the CLS 0.29 regression). Disabled here; a manually-calibrated
+  // monospace fallback is declared in globals.css instead (see
+  // "jbmono-fallback" there) so every string — not just average ones —
+  // occupies the same width under fallback or real font, independent of
+  // font-display. That makes "swap" safe to use everywhere, including
+  // the Safari bug where "optional" left this text unpainted for
+  // several seconds on real iPhones.
+  adjustFontFallback: false,
+  fallback: ["jbmono-fallback"],
   display: "swap",
 });
