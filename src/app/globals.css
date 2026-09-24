@@ -1,3 +1,36 @@
+/* Manually-calibrated fallback for JetBrains Mono (see comment in
+   fonts.js: adjustFontFallback: false disables next/font's automatic
+   Arial-based one, which is wrong for a monospace font). JetBrains Mono
+   has the classic fixed-pitch 0.6em/char advance width (600/1000 units,
+   ascent 1020/1000, descent -300/1000, per its own OS/2 table). Courier
+   New's is 1229/2048 = 0.60009 -- essentially identical, because both
+   target the same typewriter pica-pitch ratio -- so unlike Arial's
+   proportional glyphs, no per-string scaling error is introduced: any
+   string is the same width under either font, not just "average" ones.
+   The overrides below are JetBrains Mono's own ascent/descent/lineGap
+   re-expressed on Courier New's em (computed via fontkit against the
+   real JetBrainsMono-Variable.woff2 + system Courier New; size-adjust
+   ends up ~100% since the two already match). Multiple local() names
+   cover the monospace font each OS actually ships; if none resolve, this
+   @font-face fails closed and the stack falls through to the literal
+   "monospace" keyword each call site already appends. */
+@font-face {
+  font-family: "jbmono-fallback";
+  src:
+    local("Courier New"),
+    local("Courier"),
+    local("Liberation Mono"),
+    local("Nimbus Mono PS"),
+    local("DejaVu Sans Mono"),
+    local("Noto Sans Mono"),
+    local("Droid Sans Mono"),
+    local("Consolas");
+  ascent-override: 102.02%;
+  descent-override: 30.00%;
+  line-gap-override: 0%;
+  size-adjust: 99.98%;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   /* Keeps the dark backdrop + vignette covering the full screen even on
