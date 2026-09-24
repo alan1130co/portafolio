@@ -105,6 +105,7 @@ export default function Hero({ goTo }) {
               <source type="image/avif" srcSet={HERO_SRCSET_AVIF} sizes={HERO_PHOTO_SIZES} />
               <source type="image/webp" srcSet={HERO_SRCSET_WEBP} sizes={HERO_PHOTO_SIZES} />
               <img
+                id="hero-image"
                 src="/hero/hero-960.webp"
                 srcSet={HERO_SRCSET_WEBP}
                 sizes={HERO_PHOTO_SIZES}

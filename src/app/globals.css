@@ -82,6 +82,50 @@ body {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
 
+/* Loading overlay: server-rendered so it paints on the very first frame,
+   no JS/hydration required to appear. `layout.js`'s inline script removes
+   it once the Hero photo (or, failing that, window load) confirms the
+   above-the-fold content is ready — never a fixed timer. Fixed positioning
+   keeps it out of normal flow, so toggling `.is-hidden` can never shift
+   layout (no CLS either way), and only opacity/visibility animate —
+   both compositor-only, and collapsed under prefers-reduced-motion by the
+   rule above. */
+#loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: radial-gradient(950px 760px at 4% -6%, #2f7cff2a, transparent 60%), radial-gradient(1300px 640px at 78% 18%, #9fd6ff1e, transparent 62%), #0a1420;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+#loading-overlay.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.loading-overlay__cursor {
+  font-family: var(--font-jbmono), monospace;
+  font-size: clamp(40px, 8vw, 64px);
+  font-weight: 700;
+  color: #5c9bff;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 24px #2f7cff66;
+}
+.loading-overlay__cursor span {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+}
+.loading-overlay__text {
+  font-family: var(--font-jbmono), monospace;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: #9fd6ff;
+}
+
 .page { padding: 132px 24px 70px; max-width: 1080px; margin: 0 auto; }
 /* svh (not dvh) on purpose: this box uses justify-content:center to vertically
    center its content, so its height directly squeezes/expands that content.
